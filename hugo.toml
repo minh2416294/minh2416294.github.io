@@ -1,4 +1,4 @@
-baseURL = "http://localhost:1313/"
+baseURL = "https://minh2416294.github.io/"
 locale = "en-us"
 title = "Minh's Blog"
 theme = "PaperMod"
