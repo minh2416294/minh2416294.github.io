@@ -1,0 +1,32 @@
+{{- define "main" -}}
+<header class="page-header">
+  <h1>{{ .Title }}</h1>
+</header>
+
+{{- if .Content }}
+<div class="post-content md-content">
+  {{ .Content }}
+</div>
+{{- end }}
+
+{{- with .Params.projects }}
+<section class="projects-grid">
+  {{- range . }}
+  <article class="project-card">
+    <h2>{{ .name }}</h2>
+    <p>{{ .blurb }}</p>
+    {{- with .links }}
+    <ul class="project-links">
+      {{- range . }}
+      <li><a href="{{ .url }}" target="_blank" rel="noopener noreferrer">{{ .label }}</a></li>
+      {{- end }}
+    </ul>
+    {{- end }}
+  </article>
+  {{- end }}
+</section>
+{{- else }}
+<p>No projects yet.</p>
+{{- end }}
+
+{{- end -}}

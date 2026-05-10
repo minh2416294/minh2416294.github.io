@@ -1,0 +1,105 @@
+baseURL = "http://localhost:1313/"
+locale = "en-us"
+title = "Minh's Blog"
+theme = "PaperMod"
+
+enableRobotsTXT = true
+buildDrafts = false
+buildFuture = false
+buildExpired = false
+pygmentsUseClasses = true
+
+[pagination]
+  pagerSize = 10
+
+[minify]
+  disableXML = true
+  minifyOutput = true
+
+[markup]
+  [markup.highlight]
+    noClasses = false
+    style = "github"
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
+
+[params]
+  env = "production"
+  description = "Computer science student learning about Agentic AI."
+  author = "Tran Binh Minh"
+  defaultTheme = "auto"
+  disableThemeToggle = false
+  ShowReadingTime = true
+  ShowShareButtons = false
+  ShowPostNavLinks = true
+  ShowBreadCrumbs = false
+  ShowCodeCopyButtons = true
+  ShowWordCount = false
+  ShowToc = false
+  comments = false
+
+  [params.profileMode]
+    enabled = false
+
+  [params.fuseOpts]
+    isCaseSensitive = false
+    shouldSort = true
+    location = 0
+    distance = 1000
+    threshold = 0.4
+    minMatchCharLength = 0
+    limit = 10
+    keys = ["title", "permalink", "summary", "content"]
+
+  [[params.socialIcons]]
+    name = "github"
+    url = "https://github.com/minh2416294"
+  [[params.socialIcons]]
+    name = "linkedin"
+    url = "https://www.linkedin.com/in/tr%E1%BA%A7n-b%C3%ACnh-minh-5b88a63b5/"
+  [[params.socialIcons]]
+    name = "x"
+    url = "https://x.com/BinhMinh1evo"
+  [[params.socialIcons]]
+    name = "email"
+    url = "mailto:minh2416294@gmail.com"
+
+[[menu.main]]
+  identifier = "about"
+  name = "About"
+  url = "/"
+  weight = 10
+[[menu.main]]
+  identifier = "projects"
+  name = "Projects"
+  url = "/projects/"
+  weight = 20
+[[menu.main]]
+  identifier = "contributions"
+  name = "Contributions"
+  url = "/contributions/"
+  weight = 30
+[[menu.main]]
+  identifier = "posts"
+  name = "Posts"
+  url = "/posts/"
+  weight = 40
+[[menu.main]]
+  identifier = "research"
+  name = "Research"
+  url = "/research/"
+  weight = 50
+[[menu.main]]
+  identifier = "tags"
+  name = "Tags"
+  url = "/tags/"
+  weight = 60
+[[menu.main]]
+  identifier = "search"
+  name = "Search"
+  url = "/search/"
+  weight = 70

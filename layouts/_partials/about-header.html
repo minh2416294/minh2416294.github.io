@@ -1,0 +1,14 @@
+<header class="about-header">
+  <div class="about-avatar">
+    {{- with resources.Get "images/avatar.png" }}
+    <img class="avatar-circle" src="{{ .RelPermalink }}" alt="{{ site.Params.author }}" width="120" height="120" loading="eager">
+    {{- else }}
+    <div class="avatar-circle avatar-placeholder" aria-label="Avatar placeholder"></div>
+    {{- end }}
+  </div>
+  <div class="about-intro">
+    <h1>{{ site.Title }}</h1>
+    <p class="tagline">{{ with .Params.tagline }}{{ . }}{{ else }}{{ site.Params.description }}{{ end }}</p>
+    {{- partial "social_icons.html" (dict "align" "left") }}
+  </div>
+</header>

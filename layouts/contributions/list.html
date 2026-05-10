@@ -1,0 +1,36 @@
+{{- define "main" -}}
+<header class="page-header">
+  <h1>{{ .Title }}</h1>
+</header>
+
+{{- if .Content }}
+<div class="post-content md-content">
+  {{ .Content }}
+</div>
+{{- end }}
+
+{{- with .Params.contributions }}
+{{- $sorted := sort . "date" "desc" }}
+{{- $current := "" }}
+{{- $open := false }}
+<section class="contributions">
+  {{- range $sorted }}
+    {{- if ne .repo $current }}
+      {{- if $open }}</ul>{{- end }}
+      <h2>{{ .repo }}</h2>
+      <ul class="contribution-list">
+      {{- $current = .repo }}
+      {{- $open = true }}
+    {{- end }}
+    <li>
+      <a href="{{ .url }}" target="_blank" rel="noopener noreferrer">{{ .summary }}</a>
+      <span class="date">{{ dateFormat (site.Params.DateFormat | default "Jan 2, 2006") .date }}</span>
+    </li>
+  {{- end }}
+  {{- if $open }}</ul>{{- end }}
+</section>
+{{- else }}
+<p>No contributions yet.</p>
+{{- end }}
+
+{{- end -}}
