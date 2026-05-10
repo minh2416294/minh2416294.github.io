@@ -102,3 +102,127 @@
   color: var(--secondary);
   vertical-align: middle;
 }
+
+.contact-floating {
+  position: fixed;
+  left: 50%;
+  bottom: 1.25rem;
+  transform: translateX(-50%);
+  z-index: 1000;
+  width: min(640px, calc(100vw - 2rem));
+  pointer-events: none;
+}
+
+.contact-floating > * {
+  pointer-events: auto;
+}
+
+.contact-panel {
+  background: var(--theme);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.25rem 1.25rem 1rem 1.25rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.contact-panel-header {
+  margin-bottom: 0.25rem;
+}
+
+.contact-panel-header h2 {
+  margin: 0;
+  font-size: 1.1em;
+}
+
+.contact-form-hint {
+  color: var(--secondary);
+  font-size: 0.9em;
+  margin: 0 0 0.75rem 0;
+}
+
+.contact-form-email {
+  width: 100%;
+  padding: 0.6rem 1.1rem;
+  margin-bottom: 0.6rem;
+  font: inherit;
+  color: var(--primary);
+  background: var(--theme);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.contact-form-email:focus {
+  border-color: var(--secondary);
+}
+
+.contact-form-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+  background: var(--theme);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 0.4rem 0.4rem 0.4rem 1.1rem;
+  transition: border-color 0.15s ease;
+}
+
+.contact-form-row:focus-within {
+  border-color: var(--secondary);
+}
+
+.contact-form-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  resize: none;
+  font: inherit;
+  color: var(--primary);
+  outline: none;
+  padding: 0.4rem 0;
+  line-height: 1.5;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.contact-form-input::placeholder {
+  color: var(--secondary);
+  opacity: 0.7;
+}
+
+.contact-form-send {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background: var(--tertiary);
+  color: var(--secondary);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, color 0.15s ease;
+  padding: 0;
+}
+
+.contact-form-send:hover {
+  background: var(--primary);
+  color: var(--theme);
+}
+
+.contact-form-status {
+  min-height: 1.25em;
+  margin: 0.6rem 0 0 0;
+  font-size: 0.85em;
+  color: var(--secondary);
+}
+
+.contact-form-status.success {
+  color: #2e7d32;
+}
+
+.contact-form-status.error {
+  color: #c62828;
+}

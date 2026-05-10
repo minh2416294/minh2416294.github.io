@@ -1,0 +1,40 @@
+{{- with site.Params.web3formsAccessKey -}}
+<div id="contact-floating" class="contact-floating">
+  <section id="contact-panel" class="contact-panel" aria-labelledby="contact-form-heading">
+    <header class="contact-panel-header">
+      <h2 id="contact-form-heading">Send me a message</h2>
+    </header>
+    <p class="contact-form-hint">Got a question or just want to say hi? I'll reply to your email.</p>
+    <form id="contact-form" novalidate>
+      <input type="hidden" name="access_key" value="{{ . }}">
+      <input type="hidden" name="subject" value="New message from minh2416294.github.io">
+      <input type="hidden" name="from_name" value="Minh's Blog">
+      <input type="text" name="botcheck" tabindex="-1" autocomplete="off" style="display:none" aria-hidden="true">
+      <input
+        class="contact-form-email"
+        type="email"
+        name="email"
+        placeholder="Your email"
+        required
+        autocomplete="email">
+      <div class="contact-form-row">
+        <textarea
+          class="contact-form-input"
+          name="message"
+          placeholder="Ask a question…"
+          required
+          rows="1"></textarea>
+        <button class="contact-form-send" type="submit" aria-label="Send message" title="Send">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="12" y1="19" x2="12" y2="5"></line>
+            <polyline points="5 12 12 5 19 12"></polyline>
+          </svg>
+        </button>
+      </div>
+      <p class="contact-form-status" role="status" aria-live="polite"></p>
+    </form>
+  </section>
+</div>
+{{- $js := resources.Get "js/contact-form.js" | resources.Minify | resources.Fingerprint -}}
+<script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
+{{- end -}}
