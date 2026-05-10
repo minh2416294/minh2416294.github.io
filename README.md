@@ -1,65 +1,28 @@
 # Minh's Blog
 
-Personal portfolio + writing site for Tran Binh Minh — projects, posts, research, and open-source contributions. Built as a static site so it stays simple, fast, and version-controlled.
+> 🌐 **Live site:** [minh2416294.github.io](https://minh2416294.github.io/)
 
-## Stack
+Hi, I'm **Tran Binh Minh** — a computer science student exploring **Agentic AI**: how language models can plan, use tools, and act on behalf of a user.
 
-- [Hugo](https://gohugo.io) (static site generator) — extended build, version pinned in [`.hugo-version`](.hugo-version).
-- [PaperMod](https://github.com/adityatelange/hugo-PaperMod) theme — vendored as a git submodule under `themes/PaperMod`.
-- KaTeX (per-page) for math, Mermaid (per-page) for diagrams, Fuse.js (built-in) for client-side search.
-- See [`docs/SPEC.md`](docs/SPEC.md) and [`docs/PLAN.md`](docs/PLAN.md) for the design and implementation history.
+This is my personal corner of the web. It's where I share what I'm learning, what I'm building, and what I'm thinking about.
 
-## Run locally
+## What you'll find here
 
-```bash
-git clone --recurse-submodules <repo-url>
-cd <repo>
-hugo server -D          # -D includes drafts
-```
+- **About** — who I am and what I'm currently working on.
+- **Projects** — things I've built, with links to the code and demos.
+- **Contributions** — open-source pull requests and issues I've contributed to.
+- **Posts** — short to medium write-ups on what I'm learning. Code, math, and diagrams included where it helps.
+- **Research** — longer-form independent investigations into specific topics.
+- **Tags** — browse everything by topic.
+- **Search** — find a post by keyword.
 
-Then open <http://localhost:1313/>.
+The site supports a **light / dark / system theme toggle** (top right of the navigation). It's mobile-friendly and built to be fast.
 
-If you cloned without `--recurse-submodules`, fetch the theme:
+## Get in touch
 
-```bash
-git submodule update --init --recursive
-```
+- 💼 [LinkedIn](https://www.linkedin.com/in/tr%E1%BA%A7n-b%C3%ACnh-minh-5b88a63b5/)
+- 🐙 [GitHub](https://github.com/minh2416294)
+- 🐦 [X / Twitter](https://x.com/BinhMinh1evo)
+- 📧 [minh2416294@gmail.com](mailto:minh2416294@gmail.com)
 
-## Write a post
-
-```bash
-hugo new posts/<slug>/index.md
-```
-
-Edit the generated file:
-
-- Set `draft: false` when ready to publish.
-- Set `tags: ["..."]`, write a one-line `summary`.
-- Set `math: true` to load KaTeX on this page only.
-- Set `mermaid: true` to load Mermaid on this page only.
-
-Save — Hugo's live reload picks it up.
-
-## Section conventions
-
-- **`content/posts/<slug>/index.md`** — blog posts (page bundles; drop images alongside the markdown).
-- **`content/research/<slug>/index.md`** — independent research write-ups (same shape as posts).
-- **`content/projects/_index.md`** — edit the `projects` array in frontmatter to add/edit project cards.
-- **`content/contributions/_index.md`** — edit the `contributions` array to add open-source PRs/issues.
-- **`content/_index.md`** — About page copy (intro, Currently, Skills).
-
-## Build static site
-
-```bash
-hugo --gc --minify
-```
-
-Output goes to `public/`. That folder is gitignored.
-
-## Hugo version
-
-The pinned version lives in [`.hugo-version`](.hugo-version). Hugo is generally backward-compatible, but if you hit a build error, install that version (or a later patch with the same minor) from the [Hugo releases page](https://github.com/gohugoio/hugo/releases) — make sure to grab the **extended** build.
-
-## Replace the avatar
-
-Drop a square image at `static/images/avatar.png`. The About page renders it as a circle automatically. If the file is missing, a gray placeholder shows in its place.
+Thanks for stopping by!
