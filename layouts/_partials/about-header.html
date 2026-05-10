@@ -1,7 +1,7 @@
 <header class="about-header">
   <div class="about-avatar">
-    {{- with resources.Get "images/avatar.png" }}
-    <img class="avatar-circle" src="{{ .RelPermalink }}" alt="{{ site.Params.author }}" width="120" height="120" loading="eager">
+    {{- if fileExists "static/images/avatar.png" }}
+    <img class="avatar-circle" src="/images/avatar.png" alt="{{ site.Params.author }}" width="120" height="120" loading="eager">
     {{- else }}
     <div class="avatar-circle avatar-placeholder" aria-label="Avatar placeholder"></div>
     {{- end }}
