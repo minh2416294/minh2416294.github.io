@@ -4,18 +4,19 @@ description: "Personal site of Tran Binh Minh."
 tagline: "Computer science student learning about Agentic AI."
 ---
 
-Hi, I'm **Tran Binh Minh** — a computer science student exploring Agentic AI: how language models can plan, use tools, and act on behalf of a user. This site is where I write about what I'm learning, share projects I'm building, and track open-source work.
+Hi, I'm **Tran Binh Minh** — I build agentic AI systems and train machine learning models. This site is where I write about what I'm learning, share projects I'm building, write thoughtful blogs, and track open-source work.
 
 ## Currently
 
-- Studying **Agentic AI** — how LLMs plan, call tools, and chain reasoning steps.
+- Goal: Land a position in **Security/Sandbox for AI Agents**.
+- Design **Agentic AI** systems to automate my daily workflows.
 - Building small **agent prototypes** to learn by doing.
 - Reading papers and blog posts on **tool use, retrieval, and multi-agent systems**.
 
 ## Skills
 
-**Languages:** Python, JavaScript
+**Languages:** Python, TypeScript, Java, JavaScript, C/C++, Bash
 
-**Frameworks & libraries:** PyTorch, FastAPI, LangChain, React
+**Frameworks & libraries:** Claude Agent SDK, LangGraph, MCP, Pydantic AI, FastAPI, Numpy, Pandas, Scikit-learn, MLflow
 
-**Tools:** Git, Docker, Linux, VS Code
+**Tools:** Git/GitHub, Docker, Linux, VS Code, Claude Code

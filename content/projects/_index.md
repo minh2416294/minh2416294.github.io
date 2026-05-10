@@ -3,6 +3,7 @@ title: "Projects"
 description: "Things I've built."
 projects:
   - name: "Example Project"
+    pinned: true
     blurb: "One-sentence description of what this project does and why it matters."
     links:
       - { label: "GitHub", url: "https://github.com/<USER>/example" }

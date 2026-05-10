@@ -10,7 +10,9 @@
 {{- end }}
 
 {{- with .Params.contributions }}
-{{- $sorted := sort . "date" "desc" }}
+{{- $pinned := sort (where . "pinned" true) "date" "desc" }}
+{{- $rest := sort (where . "pinned" "!=" true) "date" "desc" }}
+{{- $sorted := append $rest $pinned }}
 {{- $current := "" }}
 {{- $open := false }}
 <section class="contributions">
@@ -23,6 +25,7 @@
       {{- $open = true }}
     {{- end }}
     <li>
+      {{- if .pinned }}<span class="pin-badge" title="Pinned">Pinned</span> {{ end -}}
       <a href="{{ .url }}" target="_blank" rel="noopener noreferrer">{{ .summary }}</a>
       <span class="date">{{ dateFormat (site.Params.DateFormat | default "Jan 2, 2006") .date }}</span>
     </li>

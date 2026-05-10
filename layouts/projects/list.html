@@ -10,10 +10,16 @@
 {{- end }}
 
 {{- with .Params.projects }}
+{{- $pinned := where . "pinned" true }}
+{{- $rest := where . "pinned" "!=" true }}
+{{- $sorted := append $rest $pinned }}
 <section class="projects-grid">
-  {{- range . }}
-  <article class="project-card">
-    <h2>{{ .name }}</h2>
+  {{- range $sorted }}
+  <article class="project-card{{ if .pinned }} pinned{{ end }}">
+    <h2>
+      {{- if .pinned }}<span class="pin-badge" title="Pinned">Pinned</span> {{ end -}}
+      {{ .name }}
+    </h2>
     <p>{{ .blurb }}</p>
     {{- with .links }}
     <ul class="project-links">
