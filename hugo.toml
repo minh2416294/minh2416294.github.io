@@ -32,6 +32,7 @@ pygmentsUseClasses = true
   description = "Computer science student learning about Agentic AI."
   author = "Tran Binh Minh"
   images = ["images/og-default.png"]
+  web3formsAccessKey = "8857fe0e-b35c-4c28-8d3a-e6313d3b26a7"
   defaultTheme = "auto"
   disableThemeToggle = false
   ShowReadingTime = true
