@@ -32,7 +32,6 @@ pygmentsUseClasses = true
   description = "Computer science student learning about Agentic AI."
   author = "Tran Binh Minh"
   images = ["images/og-default.png"]
-  web3formsAccessKey = "8857fe0e-b35c-4c28-8d3a-e6313d3b26a7"
   defaultTheme = "auto"
   disableThemeToggle = false
   ShowReadingTime = true
@@ -71,9 +70,9 @@ pygmentsUseClasses = true
     url = "mailto:minh2416294@gmail.com"
 
 [[menu.main]]
-  identifier = "about"
-  name = "About"
-  url = "/"
+  identifier = "posts"
+  name = "Posts"
+  url = "/posts/"
   weight = 10
 [[menu.main]]
   identifier = "projects"
@@ -86,22 +85,12 @@ pygmentsUseClasses = true
   url = "/contributions/"
   weight = 30
 [[menu.main]]
-  identifier = "posts"
-  name = "Posts"
-  url = "/posts/"
-  weight = 40
-[[menu.main]]
-  identifier = "research"
-  name = "Research"
-  url = "/research/"
-  weight = 50
-[[menu.main]]
   identifier = "tags"
   name = "Tags"
   url = "/tags/"
-  weight = 60
+  weight = 40
 [[menu.main]]
   identifier = "search"
   name = "Search"
   url = "/search/"
-  weight = 70
+  weight = 50
