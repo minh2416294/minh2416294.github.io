@@ -1,7 +1,7 @@
 ---
 title: "how to debug tool misrouting in LLM agents"
 date: 2026-04-10
-draft: true
+draft: false
 tags: ["agents", "tool-design", "mcp", "ai-engineering"]
 summary: "Everyone says 'fix your tool descriptions.' Nobody shows how to diagnose which specific failure caused the misroute."
 ---
