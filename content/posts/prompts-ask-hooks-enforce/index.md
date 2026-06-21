@@ -1,7 +1,7 @@
 ---
 title: "your CLAUDE.md asks nicely; hooks make it true"
 date: 2026-06-21
-draft: true
+draft: false
 tags: ["claude-code", "hooks", "ai-tooling", "agent-design"]
 summary: "An instruction in a markdown file is followed most of the time. When 'most of the time' isn't good enough, the rule belongs in code that runs before the tool does."
 ---
