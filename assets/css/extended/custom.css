@@ -142,11 +142,12 @@ h1, h2, h3, h4, h5, h6,
   gap: 8px;
   font-family: var(--sans);
   font-weight: 600;
-  font-size: 15px;
+  font-size: 14px;
+  line-height: 1.2;
   color: var(--theme);
   background: var(--primary);
-  padding: 10px 18px;
-  border-radius: 8px;
+  padding: 7px 14px;
+  border-radius: 7px;
   white-space: nowrap;
 }
 
@@ -633,7 +634,7 @@ h1, h2, h3, h4, h5, h6,
   .post-entry { gap: 1rem; padding: 20px 0; }
   .post-entry .entry-footer { font-size: 0.85rem; }
   .post-entry .entry-summary { font-size: 0.95rem; -webkit-line-clamp: 3; }
-  .contact-menu > summary { padding: 8px 14px; font-size: 14px; }
+  .contact-menu > summary { padding: 6px 12px; font-size: 13px; }
 
   /* On mobile the Contact button sits on the left, so the dropdown anchors
      left and stays within the viewport. */
