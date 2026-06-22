@@ -52,12 +52,6 @@ pygmentsUseClasses = true
     x = "https://x.com/BinhMinh1evo"
     linkedin = "https://www.linkedin.com/in/tr%E1%BA%A7n-b%C3%ACnh-minh-5b88a63b5/"
 
-  [params.newsletter]
-    enabled = true
-    buttondown = ""  # TODO: your Buttondown username — set after creating the account
-    heading = "Get new posts by email"
-    subtext = "New write-ups on agents, tooling, and reliability — delivered when I publish. No spam, unsubscribe anytime."
-
   [params.fuseOpts]
     isCaseSensitive = false
     shouldSort = true

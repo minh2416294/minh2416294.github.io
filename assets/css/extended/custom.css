@@ -17,7 +17,7 @@
 :root,
 :root[data-theme="light"] {
   --theme: #f7f6f1;      /* warm off-white page */
-  --entry: #f0eee7;      /* slightly deeper panel (newsletter/cards) */
+  --entry: #f0eee7;      /* slightly deeper panel (cards) */
   --primary: #181818;    /* near-black ink */
   --secondary: #6b6b66;  /* muted text / dates */
   --tertiary: #e2e0d8;   /* hairline accents */
@@ -378,75 +378,6 @@ h1, h2, h3, h4, h5, h6,
 
 /* code blocks keep their dark bg but soften corners */
 .post-content.md-content pre { border-radius: 10px; }
-
-/* =========================================================================
-   Newsletter box (Buttondown) — bottom of every post
-   ========================================================================= */
-.newsletter {
-  max-width: 720px;
-  margin: 4rem auto 0;
-  background: var(--entry);
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 2.2rem 2.2rem 2rem;
-}
-
-.newsletter h2 {
-  font-family: var(--sans);
-  font-weight: 700;
-  font-size: 1.7rem;
-  margin: 0 0 0.5rem;
-}
-
-.newsletter p {
-  font-family: var(--serif);
-  color: var(--secondary);
-  font-size: 1.1rem;
-  margin: 0 0 1.3rem;
-  max-width: 42ch;
-}
-
-.newsletter-form {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: var(--theme);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 0.45rem 0.45rem 0.45rem 1.2rem;
-}
-
-.newsletter-form:focus-within { border-color: var(--secondary); }
-
-.newsletter-form input[type="email"] {
-  flex: 1;
-  border: 0;
-  background: transparent;
-  font-family: var(--sans);
-  font-size: 1rem;
-  color: var(--primary);
-  outline: none;
-  padding: 0.6rem 0;
-}
-
-.newsletter-form input::placeholder { color: var(--secondary); }
-
-.newsletter-form button {
-  flex-shrink: 0;
-  width: 44px;
-  height: 44px;
-  border: 0;
-  border-radius: 10px;
-  background: var(--primary);
-  color: var(--theme);
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: opacity 0.15s ease;
-}
-
-.newsletter-form button:hover { opacity: 0.82; }
 
 /* =========================================================================
    Home / landing page
