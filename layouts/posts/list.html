@@ -27,13 +27,8 @@
       {{ .Title }}
     </h2>
   </header>
-  {{- if (ne (.Param "hideSummary") true) }}
-  <div class="entry-content">
-    <p>{{ .Summary | plainify | htmlUnescape }}{{ if .Truncated }}...{{ end }}</p>
-  </div>
-  {{- end }}
   <footer class="entry-footer">
-    {{- partial "post_meta.html" . -}}
+    {{- if not .Date.IsZero }}{{ .Date | time.Format (default "Jan 2, 2006" site.Params.DateFormat) }}{{ end -}}
   </footer>
   <a class="entry-link" aria-label="post link to {{ .Title | plainify }}" href="{{ .Permalink }}"></a>
 </article>
