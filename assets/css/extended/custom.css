@@ -1,3 +1,501 @@
+/* =========================================================================
+   Anthropic-engineering-inspired theme, layered over PaperMod.
+   Bold sans (Inter) for headings/nav/UI; serif (Source Serif 4) for body.
+   All colors flow through PaperMod's CSS variables so the dark/light
+   toggle keeps working.
+   ========================================================================= */
+
+/* ---- Palette: warm off-white light mode, near-black ink -------------- */
+:root {
+  --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --serif: "Source Serif 4", Georgia, Cambria, "Times New Roman", serif;
+}
+
+/* Match PaperMod's selector specificity (`:root[data-theme=...]`) so these
+   override the theme's palette. custom.css loads last, so equal specificity
+   resolves in our favor. */
+:root,
+:root[data-theme="light"] {
+  --theme: #f7f6f1;      /* warm off-white page */
+  --entry: #f0eee7;      /* slightly deeper panel (newsletter/cards) */
+  --primary: #181818;    /* near-black ink */
+  --secondary: #6b6b66;  /* muted text / dates */
+  --tertiary: #e2e0d8;   /* hairline accents */
+  --content: #1f1f1d;    /* body text */
+  --border: #dddad0;     /* dividers */
+  --code-bg: #ecebe3;    /* keep inline-code tint in the warm family */
+}
+
+:root[data-theme="dark"] {
+  --theme: #1a1a18;
+  --entry: #242422;
+  --primary: #ededea;
+  --secondary: #9b9b95;
+  --tertiary: #3a3a37;
+  --content: #d8d8d3;
+  --border: #33332f;
+  --code-bg: #242422;
+}
+
+/* Dark mode via system preference when no explicit toggle (data-theme=auto) */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --theme: #1a1a18;
+    --entry: #242422;
+    --primary: #ededea;
+    --secondary: #9b9b95;
+    --tertiary: #3a3a37;
+    --content: #d8d8d3;
+    --border: #33332f;
+    --code-bg: #242422;
+  }
+}
+
+/* ---- Base typography -------------------------------------------------- */
+body {
+  font-family: var(--serif);
+  font-size: 19px;
+  line-height: 1.7;
+  color: var(--content);
+  background: var(--theme);
+}
+
+/* PaperMod gives list pages (home, /posts, /projects…) `body.list` a
+   `--code-bg` grey background. Force our warm page color instead. */
+body.list,
+.list {
+  background: var(--theme);
+}
+
+h1, h2, h3, h4, h5, h6,
+.entry-header h2,
+.post-title,
+.page-header h1 {
+  font-family: var(--sans);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.12;
+  color: var(--primary);
+}
+
+/* ---- Header / nav ----------------------------------------------------- */
+.nav {
+  max-width: 1140px;
+}
+
+.header {
+  border-bottom: 1px solid var(--border);
+  background: var(--theme);
+}
+
+.header-nav {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 14px 24px;
+}
+
+.logo a {
+  font-family: var(--sans);
+  font-weight: 800;
+  font-size: 22px;
+  letter-spacing: -0.03em;
+  color: var(--primary);
+}
+
+#menu a {
+  font-family: var(--sans);
+  font-weight: 500;
+  font-size: 16px;
+  color: var(--primary);
+}
+
+#menu a:hover { opacity: 0.6; }
+
+#menu .active {
+  font-weight: 600;
+  border-bottom: 2px solid var(--primary);
+}
+
+/* ---- Contact Me dropdown (replaces "Try Claude") --------------------- */
+.contact-menu {
+  position: relative;
+  margin-inline-start: 14px;
+}
+
+.contact-menu > summary {
+  list-style: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--theme);
+  background: var(--primary);
+  padding: 8px 16px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.contact-menu > summary::-webkit-details-marker { display: none; }
+
+.contact-menu > summary .chev {
+  transition: transform 0.15s ease;
+}
+
+.contact-menu[open] > summary .chev { transform: rotate(180deg); }
+
+.contact-dropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  min-width: 200px;
+  background: var(--theme);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.16);
+  padding: 6px;
+  z-index: 100;
+}
+
+.contact-dropdown a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--primary);
+  padding: 9px 12px;
+  border-radius: 8px;
+  text-decoration: none;
+}
+
+.contact-dropdown a:hover { background: var(--entry); }
+
+.contact-dropdown svg { flex-shrink: 0; }
+
+/* ---- Generic page width + headers ------------------------------------ */
+.main {
+  max-width: 1140px;
+  padding: 56px 24px 80px;
+}
+
+.page-header h1 {
+  font-size: clamp(2.6rem, 6vw, 4.2rem);
+  margin-bottom: 0.4em;
+}
+
+.page-header .post-description {
+  font-family: var(--serif);
+  font-size: 1.3rem;
+  color: var(--secondary);
+  max-width: 46ch;
+}
+
+/* ---- Post list: title-left / date-right rows (Anthropic style) ------- */
+.post-entry {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: 26px 0;
+  margin: 0;
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  transition: none;
+}
+
+.post-entry:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.post-entry:first-of-type { border-top: 1px solid var(--border); }
+
+.post-entry .entry-header { margin: 0; flex: 1; }
+
+.post-entry .entry-header h2 {
+  font-size: clamp(1.5rem, 2.6vw, 2.1rem);
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.18;
+}
+
+.post-entry:hover .entry-header h2 { text-decoration: underline; text-underline-offset: 4px; }
+
+/* date sits on the right, muted, no underline */
+.post-entry .entry-footer {
+  flex-shrink: 0;
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 0.95rem;
+  color: var(--secondary);
+  white-space: nowrap;
+  text-align: right;
+}
+
+.post-entry .entry-footer span { color: var(--secondary); }
+
+/* keep the click-anywhere overlay link */
+.post-entry .entry-link {
+  position: absolute;
+  inset: 0;
+}
+
+/* ---- Pinned badge (kept) --------------------------------------------- */
+.pin-badge {
+  display: inline-block;
+  font-family: var(--sans);
+  font-size: 0.62em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.2em 0.6em;
+  margin-right: 0.5em;
+  border-radius: 999px;
+  background: var(--tertiary);
+  color: var(--secondary);
+  vertical-align: middle;
+}
+
+/* =========================================================================
+   Single post (article) — Anthropic article layout
+   ========================================================================= */
+.post-single {
+  max-width: 1140px;
+  margin: 0 auto;
+}
+
+.post-single .post-header {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  margin-bottom: 2.5rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.article-eyebrow {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--primary);
+  margin-bottom: 1.5rem;
+}
+
+.post-single .post-title {
+  font-size: clamp(2.4rem, 5.5vw, 4rem);
+  margin: 0 0 0.2em;
+}
+
+.post-single .post-meta,
+.article-published {
+  font-family: var(--sans);
+  font-size: 0.95rem;
+  color: var(--secondary);
+  margin-top: 1rem;
+}
+
+/* lead paragraph (post description) — large serif */
+.post-single .post-description {
+  font-family: var(--serif);
+  font-size: clamp(1.3rem, 2.4vw, 1.7rem);
+  line-height: 1.45;
+  color: var(--primary);
+  margin-top: 1.4rem;
+  max-width: 34ch;
+}
+
+/* readable body column */
+.post-content.md-content {
+  max-width: 720px;
+  margin-inline: auto;
+  font-family: var(--serif);
+  font-size: 1.18rem;
+  line-height: 1.75;
+}
+
+.post-content.md-content h2 {
+  font-size: 1.9rem;
+  margin: 2.4em 0 0.7em;
+}
+
+.post-content.md-content h3 {
+  font-size: 1.4rem;
+  margin: 2em 0 0.6em;
+}
+
+.post-content.md-content p { margin: 0 0 1.3em; }
+
+.post-content.md-content a {
+  color: var(--primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+
+.post-content.md-content a:hover { opacity: 0.65; }
+
+.post-content.md-content blockquote {
+  border-inline-start: 3px solid var(--border);
+  color: var(--secondary);
+  font-style: italic;
+}
+
+/* figure captions — italic muted serif */
+.post-content.md-content figure figcaption,
+.post-content.md-content figcaption {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 0.95rem;
+  color: var(--secondary);
+  text-align: left;
+  margin-top: 0.6rem;
+}
+
+/* footnotes */
+.post-content.md-content .footnotes {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  font-size: 1.02rem;
+}
+
+.post-single .post-footer { max-width: 720px; margin-inline: auto; }
+
+.post-tags li a {
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  background: var(--entry);
+  border: 1px solid var(--border);
+}
+
+/* code blocks keep their dark bg but soften corners */
+.post-content.md-content pre { border-radius: 10px; }
+
+/* =========================================================================
+   Newsletter box (Buttondown) — bottom of every post
+   ========================================================================= */
+.newsletter {
+  max-width: 720px;
+  margin: 4rem auto 0;
+  background: var(--entry);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 2.2rem 2.2rem 2rem;
+}
+
+.newsletter h2 {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 1.7rem;
+  margin: 0 0 0.5rem;
+}
+
+.newsletter p {
+  font-family: var(--serif);
+  color: var(--secondary);
+  font-size: 1.1rem;
+  margin: 0 0 1.3rem;
+  max-width: 42ch;
+}
+
+.newsletter-form {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--theme);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.45rem 0.45rem 0.45rem 1.2rem;
+}
+
+.newsletter-form:focus-within { border-color: var(--secondary); }
+
+.newsletter-form input[type="email"] {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  font-family: var(--sans);
+  font-size: 1rem;
+  color: var(--primary);
+  outline: none;
+  padding: 0.6rem 0;
+}
+
+.newsletter-form input::placeholder { color: var(--secondary); }
+
+.newsletter-form button {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--primary);
+  color: var(--theme);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.15s ease;
+}
+
+.newsletter-form button:hover { opacity: 0.82; }
+
+/* =========================================================================
+   Home / landing page
+   ========================================================================= */
+.home-hero {
+  max-width: 1140px;
+  margin: 0 auto 3.5rem;
+}
+
+.home-hero h1 {
+  font-family: var(--sans);
+  font-size: clamp(2.8rem, 7vw, 5rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin: 0 0 1.2rem;
+}
+
+.home-hero .lead {
+  font-family: var(--serif);
+  font-size: clamp(1.3rem, 2.6vw, 1.8rem);
+  line-height: 1.5;
+  color: var(--primary);
+  max-width: 30ch;
+}
+
+.home-section-title {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--secondary);
+  margin: 0 0 0.5rem;
+}
+
+.home-recent { max-width: 1140px; margin: 0 auto; }
+
+.home-more {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 1rem;
+  display: inline-block;
+  margin-top: 1.6rem;
+}
+
+/* =========================================================================
+   Pre-existing components (avatar / projects / contributions / contact form)
+   ========================================================================= */
 .avatar-circle {
   width: 120px;
   height: 120px;
@@ -24,15 +522,11 @@
   }
 }
 
-.about-header .about-avatar {
-  flex-shrink: 0;
-}
-
-.about-header .about-intro h1 {
-  margin: 0 0 0.25rem 0;
-}
+.about-header .about-avatar { flex-shrink: 0; }
+.about-header .about-intro h1 { margin: 0 0 0.25rem 0; }
 
 .tagline {
+  font-family: var(--serif);
   color: var(--secondary);
   margin-top: -0.25rem;
 }
@@ -51,14 +545,17 @@
 
 .project-card {
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 1.25rem;
+  border-radius: 14px;
+  padding: 1.5rem;
   background: var(--entry);
 }
 
 .project-card h2 {
   margin-top: 0;
+  font-size: 1.35rem;
 }
+
+.project-card p { font-family: var(--serif); }
 
 .project-links {
   list-style: none;
@@ -69,40 +566,48 @@
   gap: 0.75rem;
 }
 
+.project-links a {
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.contributions h2 {
+  font-family: var(--sans);
+  font-size: 1.2rem;
+  margin: 2rem 0 0.5rem;
+}
+
 .contribution-list {
   list-style: none;
   padding: 0;
   margin: 0 0 1.5rem 0;
+  border-top: 1px solid var(--border);
 }
 
 .contribution-list li {
-  padding: 0.4rem 0;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--serif);
 }
 
+.contribution-list li a {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.contribution-list li a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
 .contribution-list .date {
+  font-family: var(--sans);
   color: var(--secondary);
   font-size: 0.85em;
   margin-left: 0.5em;
 }
 
-.post-content {
-  line-height: 1.7;
-}
+.post-content { line-height: 1.7; }
 
-.pin-badge {
-  display: inline-block;
-  font-size: 0.7em;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  padding: 0.15em 0.5em;
-  margin-right: 0.4em;
-  border-radius: 4px;
-  background: var(--tertiary);
-  color: var(--secondary);
-  vertical-align: middle;
-}
-
+/* ---- Floating contact form (kept as-is) ------------------------------ */
 .contact-floating {
   position: fixed;
   left: 50%;
@@ -113,9 +618,7 @@
   pointer-events: none;
 }
 
-.contact-floating > * {
-  pointer-events: auto;
-}
+.contact-floating > * { pointer-events: auto; }
 
 .contact-panel {
   background: var(--theme);
@@ -125,14 +628,8 @@
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
-.contact-panel-header {
-  margin-bottom: 0.25rem;
-}
-
-.contact-panel-header h2 {
-  margin: 0;
-  font-size: 1.1em;
-}
+.contact-panel-header { margin-bottom: 0.25rem; }
+.contact-panel-header h2 { margin: 0; font-size: 1.1em; }
 
 .contact-form-hint {
   color: var(--secondary);
@@ -153,9 +650,7 @@
   box-sizing: border-box;
 }
 
-.contact-form-email:focus {
-  border-color: var(--secondary);
-}
+.contact-form-email:focus { border-color: var(--secondary); }
 
 .contact-form-row {
   display: flex;
@@ -168,9 +663,7 @@
   transition: border-color 0.15s ease;
 }
 
-.contact-form-row:focus-within {
-  border-color: var(--secondary);
-}
+.contact-form-row:focus-within { border-color: var(--secondary); }
 
 .contact-form-input {
   flex: 1;
@@ -219,10 +712,22 @@
   color: var(--secondary);
 }
 
-.contact-form-status.success {
-  color: #2e7d32;
-}
+.contact-form-status.success { color: #2e7d32; }
+.contact-form-status.error { color: #c62828; }
 
-.contact-form-status.error {
-  color: #c62828;
+/* ---- Mobile ----------------------------------------------------------- */
+@media (max-width: 700px) {
+  .main { padding: 32px 18px 64px; }
+  .post-entry { gap: 1rem; padding: 20px 0; }
+  .post-entry .entry-footer { font-size: 0.85rem; }
+  .contact-menu > summary { padding: 7px 13px; font-size: 14px; }
+
+  /* On mobile the Contact button wraps to its own row on the left, so the
+     dropdown anchors left and stays within the viewport. */
+  .contact-menu { margin-inline-start: 0; }
+  .contact-dropdown {
+    right: auto;
+    left: 0;
+    min-width: 190px;
+  }
 }

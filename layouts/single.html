@@ -1,0 +1,55 @@
+{{- define "main" }}
+
+<article class="post-single">
+  <header class="post-header">
+    <p class="article-eyebrow">{{ with .CurrentSection.Title }}{{ . }}{{ else }}Posts{{ end }}</p>
+    <h1 class="post-title entry-hint-parent">
+      {{ .Title }}
+      {{- if .Draft }}<span class="entry-hint" title="Draft"> · Draft</span>{{ end }}
+    </h1>
+    {{- if not (.Param "hideMeta") }}
+    <div class="post-meta article-published">
+      {{- if not .Date.IsZero }}Published {{ .Date | time.Format (default "January 2, 2006" site.Params.DateFormat) }}{{ end -}}
+      {{ if (.Param "ShowReadingTime") }} · {{ .ReadingTime }} min read{{ end }}
+    </div>
+    {{- end }}
+    {{- $lead := .Description | default .Summary }}
+    {{- with $lead }}
+    <div class="post-description">{{ . | plainify }}</div>
+    {{- end }}
+  </header>
+
+  {{- $isHidden := (.Param "cover.hiddenInSingle") | default (.Param "cover.hidden") | default false }}
+  {{- partial "cover.html" (dict "cxt" . "IsSingle" true "isHidden" $isHidden) }}
+  {{- if (.Param "ShowToc") }}
+  {{- partial "toc.html" . }}
+  {{- end }}
+
+  {{- if .Content }}
+  <div class="post-content md-content">
+    {{- if not (.Param "disableAnchoredHeadings") }}
+    {{- partial "anchored_headings.html" .Content -}}
+    {{- else }}{{ .Content }}{{ end }}
+  </div>
+  {{- end }}
+
+  {{- partial "extend_post_content.html" . }}
+
+  <footer class="post-footer">
+    {{- $tags := .Language.Params.Taxonomies.tag | default "tags" }}
+    <ul class="post-tags">
+      {{- range ($.GetTerms $tags) }}
+      <li><a href="{{ .Permalink }}">{{ .LinkTitle }}</a></li>
+      {{- end }}
+    </ul>
+    {{- if (.Param "ShowPostNavLinks") }}
+    {{- partial "post_nav_links.html" . }}
+    {{- end }}
+  </footer>
+
+  {{- if ne .Params.newsletter false }}
+  {{- partial "newsletter.html" . }}
+  {{- end }}
+</article>
+
+{{- end }}{{/* end main */}}

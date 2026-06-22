@@ -1,0 +1,38 @@
+{{- with site.Params.newsletter }}
+{{- if .enabled }}
+<section class="newsletter" aria-label="Subscribe by email">
+  <h2>{{ .heading | default "Get new posts by email" }}</h2>
+  <p>{{ .subtext | default "New write-ups delivered when I publish." }}</p>
+  {{- if .buttondown }}
+  <form class="newsletter-form"
+        action="https://buttondown.com/api/emails/embed-subscribe/{{ .buttondown }}"
+        method="post"
+        target="popupwindow"
+        onsubmit="window.open('https://buttondown.com/{{ .buttondown }}', 'popupwindow', 'noopener')">
+    <input type="email" name="email" placeholder="Enter your email" required>
+    <button type="submit" aria-label="Subscribe">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+        <polyline points="12 5 19 12 12 19"></polyline>
+      </svg>
+    </button>
+  </form>
+  {{- else }}
+  {{/* Buttondown username not set yet — show the box but point submit at a clear no-op.
+       Set [params.newsletter].buttondown in hugo.toml to activate. */}}
+  <form class="newsletter-form" onsubmit="return false;">
+    <input type="email" name="email" placeholder="Enter your email" required disabled
+           title="Newsletter signup is being set up.">
+    <button type="submit" aria-label="Subscribe" disabled>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+        <polyline points="12 5 19 12 12 19"></polyline>
+      </svg>
+    </button>
+  </form>
+  {{- end }}
+</section>
+{{- end }}
+{{- end }}
