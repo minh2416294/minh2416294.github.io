@@ -1,4 +1,4 @@
-baseURL = "https://tranbinhminh.github.io/"
+baseURL = "https://minh2416294.github.io/"
 locale = "en-us"
 title = "Minh's Blog"
 theme = "PaperMod"
@@ -70,7 +70,7 @@ pygmentsUseClasses = true
 
   [[params.socialIcons]]
     name = "github"
-    url = "https://github.com/tranbinhminh"
+    url = "https://github.com/minh2416294"
   [[params.socialIcons]]
     name = "linkedin"
     url = "https://www.linkedin.com/in/tr%E1%BA%A7n-b%C3%ACnh-minh-5b88a63b5/"

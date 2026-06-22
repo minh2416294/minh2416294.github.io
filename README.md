@@ -1,6 +1,6 @@
 # Minh's Blog
 
-> 🌐 **Live site:** [tranbinhminh.github.io](https://tranbinhminh.github.io/)
+> 🌐 **Live site:** [minh2416294.github.io](https://minh2416294.github.io/)
 
 Hi, I'm **Tran Binh Minh** — a computer science student exploring **Agentic AI**: how language models can plan, use tools, and act on behalf of a user.
 
@@ -19,7 +19,7 @@ The site has a **light / dark / system theme toggle** (top right of the navigati
 ## Get in touch
 
 - 💼 [LinkedIn](https://www.linkedin.com/in/tr%E1%BA%A7n-b%C3%ACnh-minh-5b88a63b5/)
-- 🐙 [GitHub](https://github.com/tranbinhminh)
+- 🐙 [GitHub](https://github.com/minh2416294)
 - 🐦 [X / Twitter](https://x.com/BinhMinh1evo)
 - 📧 [minh2416294@gmail.com](mailto:minh2416294@gmail.com)
 
