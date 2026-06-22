@@ -2,7 +2,6 @@
 
 <article class="post-single">
   <header class="post-header">
-    <p class="article-eyebrow">{{ with .CurrentSection.Title }}{{ . }}{{ else }}Posts{{ end }}</p>
     <h1 class="post-title entry-hint-parent">
       {{ .Title }}
       {{- if .Draft }}<span class="entry-hint" title="Draft"> · Draft</span>{{ end }}
