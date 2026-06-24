@@ -9,4 +9,4 @@ contributions:
     date: 2026-04-01
 ---
 
-A short paragraph introducing your open-source work — which projects you've contributed to and what kinds of changes you tend to make.
+Open-source work I've shipped — bug fixes and small improvements to tools I actually use. I tend to start where I got stuck myself, trace the issue to its root, and send the smallest change that fixes it.
