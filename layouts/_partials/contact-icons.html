@@ -2,6 +2,11 @@
        as a horizontal icon row. Reuses PaperMod's svg.html for the glyphs. */ -}}
 {{- with site.Params.contact }}
 <div class="contact-icons">
+  {{- with .github }}
+  <a href="{{ . | safeURL }}" target="_blank" rel="noopener noreferrer me" title="GitHub" aria-label="GitHub">
+    {{- partial "svg.html" (dict "name" "github") -}}
+  </a>
+  {{- end }}
   {{- with .discord }}
   <a href="{{ . | safeURL }}" target="_blank" rel="noopener noreferrer me" title="Discord" aria-label="Discord">
     {{- partial "svg.html" (dict "name" "discord") -}}
@@ -20,6 +25,11 @@
   {{- with .linkedin }}
   <a href="{{ . | safeURL }}" target="_blank" rel="noopener noreferrer me" title="LinkedIn" aria-label="LinkedIn">
     {{- partial "svg.html" (dict "name" "linkedin") -}}
+  </a>
+  {{- end }}
+  {{- with .email }}
+  <a href="{{ . | safeURL }}" title="Email" aria-label="Email">
+    {{- partial "svg.html" (dict "name" "email") -}}
   </a>
   {{- end }}
 </div>
