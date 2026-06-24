@@ -1,0 +1,26 @@
+{{- /* Social icon row (Lil'Log style) — renders the [params.contact] links
+       as a horizontal icon row. Reuses PaperMod's svg.html for the glyphs. */ -}}
+{{- with site.Params.contact }}
+<div class="contact-icons">
+  {{- with .discord }}
+  <a href="{{ . | safeURL }}" target="_blank" rel="noopener noreferrer me" title="Discord" aria-label="Discord">
+    {{- partial "svg.html" (dict "name" "discord") -}}
+  </a>
+  {{- end }}
+  {{- with .whatsapp }}
+  <a href="{{ . | safeURL }}" target="_blank" rel="noopener noreferrer me" title="WhatsApp" aria-label="WhatsApp">
+    {{- partial "svg.html" (dict "name" "whatsapp") -}}
+  </a>
+  {{- end }}
+  {{- with .x }}
+  <a href="{{ . | safeURL }}" target="_blank" rel="noopener noreferrer me" title="X / Twitter" aria-label="X / Twitter">
+    {{- partial "svg.html" (dict "name" "x") -}}
+  </a>
+  {{- end }}
+  {{- with .linkedin }}
+  <a href="{{ . | safeURL }}" target="_blank" rel="noopener noreferrer me" title="LinkedIn" aria-label="LinkedIn">
+    {{- partial "svg.html" (dict "name" "linkedin") -}}
+  </a>
+  {{- end }}
+</div>
+{{- end }}

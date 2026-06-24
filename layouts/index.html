@@ -6,6 +6,7 @@
   {{- with $postsSection.Description }}
   <div class="post-description">{{ . | markdownify }}</div>
   {{- end }}
+  {{- partial "contact-icons.html" . }}
 </header>
 
 {{- $pages := where site.RegularPages "Section" "posts" }}
