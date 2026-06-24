@@ -6,6 +6,7 @@
   {{- if .Description }}
   <div class="post-description">{{ .Description | markdownify }}</div>
   {{- end }}
+  {{- partial "contact-icons.html" . }}
 </header>
 {{- end }}
 
