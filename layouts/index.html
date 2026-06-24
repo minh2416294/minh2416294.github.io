@@ -1,48 +1,18 @@
-{{- define "main" -}}
-{{- $postsSection := site.GetPage "/posts" }}
-
-<header class="page-header">
-  <h1>Posts</h1>
-  {{- with $postsSection.Description }}
-  <div class="post-description">{{ . | markdownify }}</div>
-  {{- end }}
-  {{- partial "contact-icons.html" . }}
-</header>
-
-{{- $pages := where site.RegularPages "Section" "posts" }}
-{{- $pinned := where $pages "Params.pin" true }}
-{{- $rest := where $pages "Params.pin" "!=" true }}
-{{- $sorted := union $pinned $rest }}
-{{- $paginator := .Paginate $sorted }}
-
-{{- range $paginator.Pages }}
-<article class="post-entry">
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">
-      {{- if .Params.pin }}<span class="pin-badge" title="Pinned">Pinned</span> {{ end -}}
-      {{ .Title }}
-    </h2>
-    {{- with .Summary }}
-    <p class="entry-summary">{{ . | plainify | htmlUnescape }}</p>
-    {{- end }}
-  </header>
-  <footer class="entry-footer">
-    {{- if not .Date.IsZero }}{{ .Date | time.Format (default "Jan 2, 2006" site.Params.DateFormat) }}{{ end -}}
-  </footer>
-  <a class="entry-link" aria-label="post link to {{ .Title | plainify }}" href="{{ .Permalink }}"></a>
-</article>
-{{- end }}
-
-{{- if gt $paginator.TotalPages 1 }}
-<footer class="page-footer">
-  <nav class="pagination">
-    {{- if $paginator.HasPrev }}
-    <a class="prev" href="{{ $paginator.Prev.URL | absURL }}">«&nbsp;Prev</a>
-    {{- end }}
-    {{- if $paginator.HasNext }}
-    <a class="next" href="{{ $paginator.Next.URL | absURL }}">Next&nbsp;»</a>
-    {{- end }}
-  </nav>
-</footer>
-{{- end }}
-{{- end -}}
+{{- /* Homepage is a redirect to /posts/ — the real content lives at the
+       Posts section page. Standalone document (no theme baseof), so there is
+       no chrome flash before the redirect. */ -}}
+{{- $target := "/posts/" | relLangURL -}}
+<!DOCTYPE html>
+<html lang="{{ site.Language.Lang | default "en" }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="robots" content="noindex, follow">
+  <meta http-equiv="refresh" content="0; url={{ $target }}">
+  <link rel="canonical" href="{{ "/posts/" | absLangURL }}">
+  <title>{{ site.Title }}</title>
+  <script>window.location.replace({{ $target }});</script>
+</head>
+<body>
+  <p>Redirecting to <a href="{{ $target }}">Posts</a>&hellip;</p>
+</body>
+</html>
