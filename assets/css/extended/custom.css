@@ -154,6 +154,11 @@ h1, h2, h3, h4, h5, h6,
   margin-top: 1.4rem;
 }
 
+/* On list pages the icon row sits above cards/lists — add breathing room
+   so it doesn't touch them. (On single posts the header padding already
+   provides the gap, so this is scoped to list pages only.) */
+body.list .contact-icons { margin-bottom: 2.5rem; }
+
 .contact-icons a {
   display: inline-flex;
   color: var(--secondary);
