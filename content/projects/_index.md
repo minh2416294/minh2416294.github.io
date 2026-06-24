@@ -10,4 +10,4 @@ projects:
       - { label: "Demo", url: "https://example.com" }
 ---
 
-A short paragraph introducing what's on this page — what kinds of projects you build and what unifies them.
+Things I've built — mostly small, sharp tools around AI agents and developer workflows. Each one started from a real problem I hit, not a feature I wanted to show off.
