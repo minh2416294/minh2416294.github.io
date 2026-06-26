@@ -17,16 +17,6 @@
     {{- partial "svg.html" (dict "name" "whatsapp") -}}
   </a>
   {{- end }}
-  {{- with .x }}
-  <a href="{{ . | safeURL }}" target="_blank" rel="noopener noreferrer me" title="X / Twitter" aria-label="X / Twitter">
-    {{- partial "svg.html" (dict "name" "x") -}}
-  </a>
-  {{- end }}
-  {{- with .linkedin }}
-  <a href="{{ . | safeURL }}" target="_blank" rel="noopener noreferrer me" title="LinkedIn" aria-label="LinkedIn">
-    {{- partial "svg.html" (dict "name" "linkedin") -}}
-  </a>
-  {{- end }}
   {{- with .email }}
   {{- /* Inline a FILL-based envelope: PaperMod's "email" glyph is stroke-based,
          which renders as a blank rectangle under our `fill: currentColor` rule. */ -}}

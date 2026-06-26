@@ -54,8 +54,6 @@ pygmentsUseClasses = true
     github = "https://github.com/minh2416294"
     discord = "https://discord.com/users/1477770162491887809"
     whatsapp = "https://wa.me/84396065999"
-    x = "https://x.com/BinhMinh1evo"
-    linkedin = "https://www.linkedin.com/in/tr%E1%BA%A7n-b%C3%ACnh-minh-5b88a63b5/"
     email = "mailto:minh2416294@gmail.com"
 
   [params.fuseOpts]
@@ -71,12 +69,6 @@ pygmentsUseClasses = true
   [[params.socialIcons]]
     name = "github"
     url = "https://github.com/minh2416294"
-  [[params.socialIcons]]
-    name = "linkedin"
-    url = "https://www.linkedin.com/in/tr%E1%BA%A7n-b%C3%ACnh-minh-5b88a63b5/"
-  [[params.socialIcons]]
-    name = "x"
-    url = "https://x.com/BinhMinh1evo"
   [[params.socialIcons]]
     name = "email"
     url = "mailto:minh2416294@gmail.com"
