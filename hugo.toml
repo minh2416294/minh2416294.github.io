@@ -27,6 +27,10 @@ pygmentsUseClasses = true
 [outputs]
   home = ["HTML", "RSS", "JSON"]
 
+# Tags page removed: an empty taxonomies table disables Hugo's default
+# `tag`/`category` taxonomies, so /tags/ and /tags/<term>/ are not generated.
+[taxonomies]
+
 [params]
   env = "production"
   description = "Computer science student learning about Agentic AI."
@@ -47,8 +51,10 @@ pygmentsUseClasses = true
     enabled = false
 
   [params.contact]
+    github = "https://github.com/minh2416294"
     discord = "https://discord.com/users/1477770162491887809"
     whatsapp = "https://wa.me/84396065999"
+    email = "mailto:minh2416294@gmail.com"
 
   [params.fuseOpts]
     isCaseSensitive = false
@@ -82,11 +88,6 @@ pygmentsUseClasses = true
   name = "Contributions"
   url = "/contributions/"
   weight = 30
-[[menu.main]]
-  identifier = "tags"
-  name = "Tags"
-  url = "/tags/"
-  weight = 40
 [[menu.main]]
   identifier = "search"
   name = "Search"

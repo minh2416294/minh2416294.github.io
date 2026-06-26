@@ -128,68 +128,6 @@ h1, h2, h3, h4, h5, h6,
   border-bottom: 2px solid var(--primary);
 }
 
-/* ---- Contact Me dropdown (replaces "Try Claude") --------------------- */
-.contact-menu {
-  position: relative;
-  margin-inline-start: 14px;
-}
-
-.contact-menu > summary {
-  list-style: none;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-family: var(--sans);
-  font-weight: 600;
-  font-size: 15px;
-  color: var(--theme);
-  background: var(--primary);
-  padding: 10px 18px;
-  border-radius: 8px;
-  white-space: nowrap;
-}
-
-.contact-menu > summary:hover { opacity: 0.88; }
-
-.contact-menu > summary::-webkit-details-marker { display: none; }
-
-.contact-menu > summary .chev {
-  transition: transform 0.15s ease;
-}
-
-.contact-menu[open] > summary .chev { transform: rotate(180deg); }
-
-.contact-dropdown {
-  position: absolute;
-  right: 0;
-  top: calc(100% + 8px);
-  min-width: 200px;
-  background: var(--theme);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.16);
-  padding: 6px;
-  z-index: 100;
-}
-
-.contact-dropdown a {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-family: var(--sans);
-  font-size: 15px;
-  font-weight: 500;
-  color: var(--primary);
-  padding: 9px 12px;
-  border-radius: 8px;
-  text-decoration: none;
-}
-
-.contact-dropdown a:hover { background: var(--entry); }
-
-.contact-dropdown svg { flex-shrink: 0; }
-
 /* ---- Generic page width + headers ------------------------------------ */
 .main {
   max-width: 1140px;
@@ -205,7 +143,34 @@ h1, h2, h3, h4, h5, h6,
   font-family: var(--serif);
   font-size: 1.3rem;
   color: var(--secondary);
-  max-width: 46ch;
+  max-width: 80ch;
+}
+
+/* ---- Social icon row under the homepage intro (Lil'Log style) -------- */
+.contact-icons {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  margin-top: 1.4rem;
+}
+
+/* On list pages the icon row sits above cards/lists — add breathing room
+   so it doesn't touch them. (On single posts the header padding already
+   provides the gap, so this is scoped to list pages only.) */
+body.list .contact-icons { margin-bottom: 2.5rem; }
+
+.contact-icons a {
+  display: inline-flex;
+  color: var(--secondary);
+  transition: color 0.15s ease;
+}
+
+.contact-icons a:hover { color: var(--primary); }
+
+.contact-icons svg {
+  width: 26px;
+  height: 26px;
+  fill: currentColor;
 }
 
 /* ---- Post list: title-left / date-right rows (Anthropic style) ------- */
@@ -339,6 +304,15 @@ h1, h2, h3, h4, h5, h6,
   font-family: var(--serif);
   font-size: 1.18rem;
   line-height: 1.55;
+}
+
+/* List-page intros (Projects, Contributions, Posts) are NOT article bodies —
+   keep them left-aligned and flush with the page heading, not in the
+   centered 720px reading column. */
+body.list .post-content.md-content {
+  max-width: none;
+  margin-inline: 0;
+  text-align: left;
 }
 
 .post-content.md-content h2 {
@@ -635,14 +609,4 @@ h1, h2, h3, h4, h5, h6,
   .post-entry { gap: 1rem; padding: 20px 0; }
   .post-entry .entry-footer { font-size: 0.85rem; }
   .post-entry .entry-summary { font-size: 0.95rem; -webkit-line-clamp: 3; }
-  .contact-menu > summary { padding: 8px 14px; font-size: 14px; }
-
-  /* On mobile the Contact button sits on the left, so the dropdown anchors
-     left and stays within the viewport. */
-  .contact-menu { margin-inline-start: 0; }
-  .contact-dropdown {
-    right: auto;
-    left: 0;
-    min-width: 190px;
-  }
 }

@@ -11,7 +11,6 @@ This is my personal corner of the web, where I write up what I learn building an
 - **Posts** — write-ups on what I'm learning, mostly about agents, tooling, and reliability. Code, math, and diagrams included where they help.
 - **Projects** — things I've built, with links to the code and demos.
 - **Contributions** — open-source pull requests and issues I've worked on.
-- **Tags** — browse everything by topic.
 - **Search** — find a post by keyword.
 
 The site has a **light / dark / system theme toggle** (top right of the navigation). It's mobile-friendly and built to be fast.

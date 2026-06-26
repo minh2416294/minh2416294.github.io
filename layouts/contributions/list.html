@@ -8,6 +8,7 @@
   {{ .Content }}
 </div>
 {{- end }}
+{{- partial "contact-icons.html" . }}
 
 {{- with .Params.contributions }}
 {{- $sorted := sort . "date" "desc" }}
