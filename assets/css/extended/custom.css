@@ -504,6 +504,8 @@ h1, h2, h3, h4, h5, h6,
 
 .contribution-list li a:hover { text-decoration: underline; text-underline-offset: 3px; }
 
+.contribution-repo { font-weight: 700; }
+
 .contribution-list .date {
   font-family: var(--sans);
   color: var(--secondary);
