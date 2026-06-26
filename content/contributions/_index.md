@@ -2,11 +2,42 @@
 title: "Open-source contributions"
 description: "Merged PRs and issues I've contributed to."
 contributions:
-  - repo: "example/repo"
-    pinned: true
-    summary: "Fixed a bug in the foo handler."
-    url: "https://github.com/example/repo/pull/123"
-    date: 2026-04-01
+  - repo: "cline/cline"
+    summary: "Populate OpenCode model list in the CLI picker"
+    url: "https://github.com/cline/cline/pull/11876"
+    date: 2026-06-26
+  - repo: "confident-ai/deepeval"
+    summary: "Document that logprob-less GPT-5 models are unsupported for G-Eval"
+    url: "https://github.com/confident-ai/deepeval/pull/2805"
+    date: 2026-06-26
+  - repo: "confident-ai/deepeval"
+    summary: "Fix nonexistent ToolCallParams.TOOL reference in tool-correctness docs"
+    url: "https://github.com/confident-ai/deepeval/pull/2804"
+    date: 2026-06-26
+  - repo: "langfuse/langfuse"
+    summary: "Send Azure x-ms-blob-type header on dataset media upload"
+    url: "https://github.com/langfuse/langfuse/pull/14574"
+    date: 2026-06-25
+  - repo: "cline/cline"
+    summary: "Fix outdated skills enable path in docs"
+    url: "https://github.com/cline/cline/pull/11838"
+    date: 2026-06-25
+  - repo: "cline/cline"
+    summary: "Show vertical scrollbar in the command output panel"
+    url: "https://github.com/cline/cline/pull/11699"
+    date: 2026-06-21
+  - repo: "cline/cline"
+    summary: "Require per-tool approval when the Auto-approve toggle is off"
+    url: "https://github.com/cline/cline/pull/11698"
+    date: 2026-06-21
+  - repo: "cline/cline"
+    summary: "Set type=streamableHttp in the remote MCP server example"
+    url: "https://github.com/cline/cline/pull/11690"
+    date: 2026-06-20
+  - repo: "langwatch/scenario"
+    summary: "Terminate wait=False voice test drain on end-of-turn and re-enable in CI"
+    url: "https://github.com/langwatch/scenario/pull/691"
+    date: 2026-06-20
 ---
 
 Open-source work I've shipped — bug fixes and small improvements to tools I actually use. I tend to start where I got stuck myself, trace the issue to its root, and send the smallest change that fixes it.

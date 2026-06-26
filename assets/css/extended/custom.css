@@ -478,6 +478,8 @@ body.list .post-content.md-content {
 
 .contribution-list li a:hover { text-decoration: underline; text-underline-offset: 3px; }
 
+.contribution-repo { font-weight: 700; }
+
 .contribution-list .date {
   font-family: var(--sans);
   color: var(--secondary);
