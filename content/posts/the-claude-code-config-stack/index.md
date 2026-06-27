@@ -1,7 +1,7 @@
 ---
 title: "the Claude Code config stack nobody maintains"
 date: 2026-04-20
-draft: false
+draft: true
 tags: ["claude-code", "developer-tooling", "ai-engineering", "ci-cd"]
 summary: "CLAUDE.md, path rules, skills, hooks, and headless CI each have their own post. Nobody writes about how they compose — or what happens when the stack drifts."
 ---
