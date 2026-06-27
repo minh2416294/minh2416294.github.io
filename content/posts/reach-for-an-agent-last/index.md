@@ -1,7 +1,7 @@
 ---
 title: "reach for an agent last, not first"
 date: 2026-03-21
-draft: false
+draft: true
 tags: ["llm-architecture", "agents", "system-design", "ai-engineering"]
 summary: "A decision framework for picking LLM architecture by asking what failure costs first — and why agents are the right answer less often than you think."
 ---
