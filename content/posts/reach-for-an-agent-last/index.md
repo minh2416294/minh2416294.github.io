@@ -25,7 +25,7 @@ This sounds obvious. It isn't. I've seen teams reach for multi-agent systems to 
 
 ## The cost-of-failure lens
 
-Before picking an architecture, I run one more check: what does wrong output actually cost?
+Before picking any architecture, I run one more check: what does wrong output actually cost?
 
 - Financial loss, compliance breach, irreversible action → bias toward control. Workflows, hooks, human sign-off. Not agents.
 - Wrong output is cheap and recoverable → more flexibility is affordable.
