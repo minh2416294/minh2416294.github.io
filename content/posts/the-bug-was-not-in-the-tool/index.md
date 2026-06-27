@@ -1,7 +1,7 @@
 ---
 title: "I thought it was a tool bug; it was the model driving the tool"
 date: 2026-06-20
-draft: false
+draft: true
 tags: ["ai-agents", "debugging", "cline", "llm"]
 summary: "A stray `nul` file kept appearing on a user's Desktop. The reported cause was a command in the tool's code. That command didn't exist anywhere in the codebase."
 ---

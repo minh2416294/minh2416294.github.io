@@ -1,7 +1,7 @@
 ---
 title: "five failure modes in LLM extraction, and the fix for each"
 date: 2026-05-12
-draft: false
+draft: true
 tags: ["prompt-engineering", "structured-output", "llm-evaluation", "ai-engineering"]
 summary: "Every prompt engineering technique exists because a specific failure mode forced it. Here's the failure taxonomy, not the technique list."
 ---

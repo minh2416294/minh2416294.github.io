@@ -1,7 +1,7 @@
 ---
 title: "the issue was closed before I wrote a line"
 date: 2026-06-18
-draft: false
+draft: true
 tags: ["open-source", "contributing", "cline", "github"]
 summary: "I had a correct fix planned for a good-first-issue. Then I checked the issue's status: closed, not planned. The fix was right and the merge path was dead."
 ---

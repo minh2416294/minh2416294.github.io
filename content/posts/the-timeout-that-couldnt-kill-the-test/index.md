@@ -1,7 +1,7 @@
 ---
 title: "the timeout that couldn't kill the test"
 date: 2026-06-14
-draft: false
+draft: true
 tags: ["pytest", "asyncio", "flaky-tests", "debugging"]
 summary: "I added a per-test timeout to turn a CI hang into a clean failure. It hung for the full five minutes anyway. A timeout fires on a thread; the hang was in a C syscall."
 ---

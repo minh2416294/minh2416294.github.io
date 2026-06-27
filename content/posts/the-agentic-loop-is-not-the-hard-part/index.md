@@ -1,7 +1,7 @@
 ---
 title: "the agentic loop is not the hard part"
 date: 2026-04-05
-draft: false
+draft: true
 tags: ["agents", "llm-architecture", "ai-engineering", "system-design"]
 summary: "stop_reason is six lines of code. The real engineering in agentic systems is protecting what goes into the model's context window."
 ---

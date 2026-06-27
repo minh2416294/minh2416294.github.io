@@ -1,7 +1,7 @@
 ---
 title: "your agent has no ground truth about itself"
-date: 2026-06-01
-draft: false
+date: 2026-06-07
+draft: true
 tags: ["agents", "observability", "ai-engineering", "reliability"]
 summary: "Context degradation, silent failure, and miscalibrated escalation look like three separate problems. They're all the same instrumentation gap."
 ---

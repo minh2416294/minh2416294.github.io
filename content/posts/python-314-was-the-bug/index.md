@@ -1,7 +1,7 @@
 ---
 title: "Python 3.14 was the bug, not the test"
 date: 2026-06-17
-draft: false
+draft: true
 tags: ["pytest", "open-source", "flaky-tests", "python"]
 summary: "I found a flaky test in an OSS repo and almost filed it. Then I re-ran on the Python version the project actually supports, and the flake vanished."
 ---

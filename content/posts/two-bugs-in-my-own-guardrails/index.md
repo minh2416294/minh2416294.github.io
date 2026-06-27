@@ -1,7 +1,7 @@
 ---
 title: "two bugs in my own Claude Code guardrails"
 date: 2026-06-10
-draft: false
+draft: true
 tags: ["claude-code", "hooks", "ai-tooling", "developer-tooling"]
 summary: "A guardrail that blocked the workflow it was meant to protect, and a permission rule that was silently dead. Both were bugs in my own config."
 ---

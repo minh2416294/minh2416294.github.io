@@ -1,7 +1,7 @@
 ---
 title: "your RAG eval is lying to you"
 date: 2026-04-01
-draft: false
+draft: true
 tags: ["rag", "retrieval", "llm-evaluation", "ai-engineering"]
 summary: "A 0.91 faithfulness score doesn't mean your RAG pipeline works. Most eval panels can't see the layer that's actually broken."
 ---
