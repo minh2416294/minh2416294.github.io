@@ -2,6 +2,10 @@
 title: "Open-source contributions"
 description: "Merged PRs and issues I've contributed to."
 contributions:
+  - repo: "mastra-ai/mastra"
+    summary: "Record provider-executed tool results when the tool-call ID differs"
+    url: "https://github.com/mastra-ai/mastra/pull/18604"
+    date: 2026-06-29
   - repo: "cline/cline"
     summary: "Populate OpenCode model list in the CLI picker"
     url: "https://github.com/cline/cline/pull/11876"
