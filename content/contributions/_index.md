@@ -3,6 +3,10 @@ title: "Open-source contributions"
 description: "Merged PRs and issues I've contributed to."
 contributions:
   - repo: "mastra-ai/mastra"
+    summary: "Cover state typing in dowhile/dountil loop conditions"
+    url: "https://github.com/mastra-ai/mastra/pull/18689"
+    date: 2026-06-30
+  - repo: "mastra-ai/mastra"
     summary: "Record provider-executed tool results when the tool-call ID differs"
     url: "https://github.com/mastra-ai/mastra/pull/18604"
     date: 2026-06-29
