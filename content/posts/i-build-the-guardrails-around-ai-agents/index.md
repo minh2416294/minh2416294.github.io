@@ -1,66 +1,65 @@
 ---
-title: "i build the guardrails around AI agents — hi, i'm Minh"
+title: "I'm Minh and I build the guardrails around AI agents"
 date: 2026-06-30
 weight: 1
-draft: true
+draft: false
 tags: ["about", "agent-design", "claude-code", "ai-tooling"]
-summary: "A self-introduction. I work on the controls around AI agents — what they may do, what stays human, and how the system fails when something slips. Here's how I think, shown through the work, including its limits."
+summary: "A self-intro. I work on the controls around AI agents - what they can do, what stays human, and how the system fails when something slips. Here's how I think, shown through the work, including its limits."
 ---
 
-I'm Minh, and I build the unglamorous safety layer around AI agents — the controls that decide what an agent may do on its own, what stays a human's call, and how the whole thing behaves when something slips. Not the model. The harness around it. I'm early-career — a second-year CS/AI student in Hanoi — but unusually deliberate about that boundary.
+Hi! I'm Minh, and I build the safety layer around AI agents (the controls that decide what an agent may do on its own, what stays a human's call, and how the whole thing behaves when something slips). Not the model. The harness around it. Actually, I dropped out of Computer Science at Hanoi University of Science and Technology after two years to focus on agent harness engineering.
 
-Here's why I care about it. Most AI-agent demos pass once and quietly break on the second run. A test goes green on a flake. A safety rule reads like protection and turns out to be a no-op nobody noticed. The failure is invisible until it costs someone, and by then nobody remembers which assumption was load-bearing. That gap — between a system that *looks* like it works and one that actually does — is the whole job.
+From my experience, AI-agent demos often pass once and quietly break on the second run. A test goes green on a flake. A safety rule reads like protection and turns out to be a no-op nobody noticed. Moreover, the failure is invisible until it costs someone, and by then nobody remembers which assumption was load-bearing. The gap between a system that *looks* like it works and one that actually does is the whole job.
 
 If I had to put what I do in two sentences, it's these:
 
-> I build the guardrails **and** the guardrails on the guardrails — I encode the decisions that must not be delegated as mechanisms, not as habits I hope to remember.
+> I build the guardrails and the guardrails on the guardrails; I encode the decisions that must not be delegated as mechanisms, not as habits I hope to remember.
 
 > I'm early-career by years, but unusually deliberate about the human/agent boundary: I design what stays human-owned, automate what's reversible, and make the system fail loud instead of failing silent.
 
-That's the claim. The rest of this post is me showing you what it actually looks like — three real decisions, including the ones that went wrong and the proof I *can't* give you yet. I'd rather introduce myself through the work than through adjectives.
+That is the claim. The rest of this post is me showing you what it actually looks like: a few real decisions, including the ones that went wrong. I will introduce myself through the work than through adjectives. I wrote this post on June 30th so when you read this, something might change but the core ideas stay the same. I hope you love my ideas. Btw, I use ChatGPT to rewrite this post so the grammar and vocabulary I used might sound AI-generated (hope you guys don't mind)
 
-## I'd rather build a wall than write a reminder
+You can take a look into my real work on [contributions](https://minh2416294.github.io/contributions/) page and my learning posts on [posts](https://minh2416294.github.io/posts/) page.
 
-Start with a rule I care about: my agent must never push to `main`. For a while that lived as a line in my instructions file, and the agent followed it — until one session, reasoning through a confusing git state, it proposed pushing to `main` to "fix" a mismatch. It had read the rule. It decided this was the exception.
+## i stopped writing rules for my agent and started building walls
 
-That's when I stopped treating my config as rules I wrote and started treating it as code that can be wrong. An instruction in a markdown file is a strong prior, not a constraint. The model weighs it against everything else in context and follows it most of the time, and some rules can't live on "most of the time." A push to `main`, a write to a production database, a refund over the limit. The cost of the rare miss isn't a rare fraction of the cost.
+One session, my agent proposed pushing to `main`. It was reasoning through a confusing git state and decided a push would "fix" the mismatch. There was a rule against this — a line in my instructions, in plain English, that the agent had read. It read the rule, weighed it against the mess in front of it, and decided this was the exception.
 
-So I made "never push to `main`" un-violatable in three independent layers: a permission deny-list, a separate script that blocks the action before it runs, and the written rule as backup. No single lapse of attention gets through all three. That's the instinct I'd bring to your codebase — when being right 95% of the time isn't good enough, I don't write the reminder more emphatically, I move it into something deterministic that doesn't depend on anyone remembering.
+It wasn't being reckless. It was doing exactly what a probabilistic system does: treating my rule as one strong input among many, not as a law. And that's the realization that reorganized how I work. I hadn't written a weak rule. I'd filed a *governance decision* under *documentation* — I'd asked, in prose, for a thing I actually needed to be impossible. A prompt is something you request of a model. A wall is something you impose on it. The model can argue with a request. It can't argue with a wall, because it never gets the chance.
 
-The harder half of that decision was *where to draw the line* — which calls get a wall and which don't. I drew it on reversibility. Anything the agent can undo, it owns: branch commits, pushes to a feature branch, all reclaimable with a reset or a deleted branch. The one irreversible step, merging to `main`, stays mine, by hand, every time. That boundary is the part I think is genuinely useful to a team running agents: knowing which decisions you can hand off because a mistake is cheap to walk back, and which you can't because it isn't. Automate what's reversible. Keep what isn't. Make the system fail loud instead of failing silent.
+So I rebuilt that one rule as three independent layers — a permission deny-list, a separate check that blocks the action before it can run, and the written rule as the last line, not the first. No single lapse of attention gets through all three. It's defense-in-depth, the same posture you'd reach for the moment a single mistake means lost money, a security hole, or a compliance breach. You don't meet that risk with a 95%-reliable reminder. You meet it with something deterministic that doesn't depend on anyone — human or model — remembering in the moment.
 
-## The time my own guardrail turned on me
+I hold myself to the same standard, which is the part I think actually matters. Before any work starts, my own sessions have to clear a few hard gates: what's the goal, is this the right level of effort, is there a plan. None of them accept "it's a quick task" as an answer. I built the fail-closed instinct to point at me, too, not just the agent — because the failure mode I'm most afraid of is the one where everything *looks* fine.
 
-I want to show you a bug, not just a win, because the bug is the more honest introduction.
+But the deny-list was never really about `main`. It was the first place I wrote down the rule I now run the entire partnership on: **let the agent own everything it can undo, and put a machine — not a sentence — around everything it can't.** Branch commits, exploration, a dozen parallel investigations: all reversible, all the agent's to make freely. The merge to `main`, the schema change, the irreversible public move: walled off, mine, by hand. The agent moves fast precisely *because* the dangerous moves are mechanically out of reach. The wall isn't what slows it down. The wall is what lets me let go.
 
-I also have a rule that the agent can't edit files while I'm on the `main` branch — same idea, enforced by a script that checks the branch before every edit. Then I created a feature branch in a worktree, asked the agent to write a file into it, and the script said no. It blocked me from the feature branch. The guardrail punished the exact workflow it existed to protect.
+## i don't trust the agent — and i don't trust my own guardrails either
 
-The cause: the script read the branch of the folder I'd *started* the session in, not the branch of the file I was *writing*. With worktrees those are different. I'd written something correct as English — "don't edit on `main`" — and wrong as code, and I'd guarded the process when I meant to guard the file.
+Then one of those walls turned on me.
 
-I fixed it in one line. But the lesson outlasted the patch, and it's the thing I'd actually want a teammate to know about me: a control that fires on the wrong thing is more dangerous than no control, because it *looks* like you're covered. "It's in my config" and "it fires" turned out to be different claims, twice. The only reason I caught the second one was a test I wrote to check my rules against their own behavior — the same move I'd push you to make on any system you can no longer hold in your head.
+I have a second guard, a cousin of the first: the agent can't edit files while I'm sitting on `main`. The point is to force real work onto feature branches. So I made a feature branch in a worktree, asked the agent to write into it — the *exact* thing the guard exists to encourage — and the guard said no. It blocked me from the branch it was supposed to be protecting. The safeguard punished the workflow it was built to defend.
 
-## A bug report is a hypothesis, not a spec
+The cause was a quiet one. The script checked the branch of the folder I'd *started* the session in, not the branch of the file I was *writing into*. Most days those are the same folder, so the bug was invisible. With worktrees they diverge, and the guard had been quietly reading the wrong thing the whole time. I'd written something correct as English — "don't edit on `main`" — and wrong as code: I'd guarded the process when I meant to guard the file.
 
-The decision I keep coming back to is one where I *didn't* ship anything.
+Here's the part I'd actually want a teammate to know. When my own safeguard misfired, I didn't switch it off to get unblocked — the reflex of someone who *uses* tools. I treated it as a bug in the control plane and fixed the guard. The patch was one line; resolve the branch from the file, not the folder. The lesson outlasted it by a mile: a control that fires on the wrong thing is more dangerous than no control at all, because no control is honest about leaving you exposed, while a broken one *looks* like cover.
 
-I was working on an open issue in [cline](https://github.com/cline/cline), a popular coding agent: issue #11620. I had a plausible fix lined up and a branch ready. Before writing it, I went looking for the failure at the actual line of code it was supposed to live on. It wasn't there. The behavior in the report came from the model emitting Windows command syntax; there was no matching call in the source to fix. My fix would have been a real diff that changed nothing about the problem.
+And the only reason I caught it is that I don't extend trust to my own machinery any more than I extend it to the agent. I build the guard, and then I build the thing that watches whether the guard is still alive. Every session start, something reads my config, walks every guardrail I've installed, and tells me in red if one has gone missing or silent. Every command the agent runs lands in an audit trail, and when the blocks pile up in a session, I get a nudge at the end of it to go re-tune my own permissions. None of it is glamorous. All of it exists because "it's in my config" and "it actually fires" turned out to be different claims — twice. I orchestrate the agent, and I verify the agent. The day I started verifying my own guardrails too was the day the system stopped quietly lying to me about being safe.
 
-So I killed it. I downgraded my own work from a pull request to a plain triage comment explaining what was really happening. Dropping a defensible-looking PR is harder than writing one — it feels like the work, the diff is right there — but a fix that papers over the real cause is worse than no fix, because someone has to re-diagnose it later. I'd rather tell a maintainer "this isn't where the bug is, and here's the evidence" than hand them a confident guess that wastes a review cycle.
+## the part that isn't the agent
 
-That's the disposition I'd most want you to know about: I treat a bug report as a hypothesis to confirm, not a spec to implement. I'll tell you "I don't know yet, and here's the one thing that would settle it" before I tell you something that merely sounds right. For anyone who's had to clean up after a contributor's symptom-fix, that's the trait that takes work *off* your plate instead of adding doubt to it.
+Most people working with an agent ask one question: *can I trust it with this?* I stopped asking it. It's the wrong question, because the answer is always "mostly," and "mostly" is exactly the gap that bites you. The question I ask instead is *can I make this reversible?* — and if the answer is no, it doesn't go to the agent at all. That single swap is the operating model the whole partnership runs on, and it has three moving parts.
 
-## What I can't show you yet
+**Gated entry.** Work doesn't start until the intent, the effort, and a rough plan are pinned down. The gates don't negotiate and they don't care that I'm in a hurry. Most bad sessions I've had were bad before the first line of work — they started without a clear answer to *what are we actually doing here.*
 
-Here's the part most introductions skip, and the part that matters most for trusting a stranger.
+**Isolated work.** When the agent fans out across a codebase, each strand runs in its own context with its own brief, so one investigation can't quietly poison another with half-formed conclusions. I treat the agent's attention as a scarce budget, not a free resource — context that stays clean stays trustworthy.
 
-Almost all the evidence I just described is self-authored. The harness, the rules, the three-layer block — I wrote them, I run them, and no third party has audited any of it. My strongest open-source contributions are exactly that: *open*, in review, not merged. The success metric I set for myself, a merged PR in a real repo, I haven't cleared yet. If you're skeptical reading this, you're right to be: a rule I wrote for myself proves I can design a control, not that the control held up under someone else's pressure.
+**Staged handoff.** Work advances one phase at a time, and the agent stops at every boundary that's hard to walk back and waits for me. The reversible stretches run fast and unattended; the irreversible ones get a human. That's not caution for its own sake. It's where the speed comes from — you can let a system sprint precisely because you know exactly where it's required to stop.
 
-I'm telling you that on purpose. The whole point of the work above is refusing to claim more than the evidence supports, and the honest move is to apply that to myself, out loud, before you have to. The config is real and you can read it; the way of thinking is visible in the paper trail whether or not a merge has landed. But "this works in production" isn't a claim I get to make today, so I won't. If that distinction is one you care about in the people you work with, that's the most useful thing I can show you about how I operate.
+This is the part I think scales. The same boundary that keeps one agent safe is the one you'd hand a team running ten of them: fast where it's cheap to be wrong, stopped cold where it isn't. I'm not a faster typist with a model attached. I designed an operating model and put a machine where the judgment had to be permanent.
 
-It also tells you exactly what I'm building toward: the events that would close the gap. One merged fix in someone else's codebase. One control that constrains a second person instead of only me. I know which artifacts turn "how I work" into "what I've shipped," and I'm pointed straight at them.
 
 ## So, that's me
 
-I work on the part of agents nobody demos — the controls, the boundaries, the failure modes — and I care more about a system that fails loud than one that looks impressive. I'm early, I build in public, and I'd rather show you a bug in my own guardrails than a screenshot of them working.
+I work on the part of agents nobody demos - the controls, the boundaries, the failure modes - and I care more about a system that fails loud than one that looks impressive. I'm early, I build in public, and I'd rather show you a bug in my own guardrails than a screenshot of them working.
 
-If you build agentic systems and you've felt the specific dread of a safeguard you're no longer sure actually fires, I think I'd be useful to you — and I'd want to learn from you while I close the gap I just described. You can read the rest of what I've built right here: the contributions, the build logs, the bugs in my own guardrails. I'd rather you check than take my word for it.
+If you build agentic systems and you've felt the specific dread of a safeguard you're no longer sure actually fires, I think I'd be useful to you, and I'd want to learn from you. You can read the rest of what I've built right here: [my contributions](https://minh2416294.github.io/contributions/) or the build logs, the bugs I faced here: [my learning posts](https://minh2416294.github.io/posts/). I'd rather you check than take my word for it.
