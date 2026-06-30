@@ -48,4 +48,4 @@ contributions:
     date: 2026-06-20
 ---
 
-Open-source work I've shipped — bug fixes and small improvements to tools I actually use. I tend to start where I got stuck myself, trace the issue to its root, and send the smallest change that fixes it.
+Open-source work I've shipped - bug fixes and small improvements to AI coding agents tools.

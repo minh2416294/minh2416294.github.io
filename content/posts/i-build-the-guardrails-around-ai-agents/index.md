@@ -1,5 +1,5 @@
 ---
-title: "I'm Minh and I build the guardrails around AI agents"
+title: "About Me: My Core Values & Vision"
 date: 2026-06-30
 weight: 1
 draft: false
