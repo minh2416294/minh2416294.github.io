@@ -1,5 +1,5 @@
 ---
-title: "how I debug tool misrouting in LLM agents"
+title: "Debugging tool misrouting in LLM agents"
 date: 2026-04-10
 draft: false
 tags: ["agents", "tool-design", "mcp", "ai-engineering"]

@@ -1,5 +1,5 @@
 ---
-title: "The agent's internal state that lacks a validated benchmark."
+title: "Auditing Agent Self-Truth"
 date: 2026-06-07
 draft: false
 tags: ["agents", "observability", "ai-engineering", "reliability"]

@@ -1,5 +1,5 @@
 ---
-title: "2 bugs in my agent guardrails"
+title: "Debugging my agent guardrails"
 date: 2026-06-10
 draft: false
 tags: ["claude-code", "hooks", "ai-tooling", "developer-tooling"]

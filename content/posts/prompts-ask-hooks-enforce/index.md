@@ -1,5 +1,5 @@
 ---
-title: "What is hook? Why agent need it instead of just a markdown file instruction"
+title: "Using hook as a deterministic guardrail"
 date: 2026-06-21
 draft: false
 tags: ["claude-code", "hooks", "ai-tooling", "agent-design"]
