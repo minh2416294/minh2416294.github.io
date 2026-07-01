@@ -1,12 +1,12 @@
 ---
-title: "the Claude Code config stack nobody maintains"
+title: "Explore the Claude Code config stack"
 date: 2026-04-20
-draft: true
+draft: false
 tags: ["claude-code", "developer-tooling", "ai-engineering", "ci-cd"]
-summary: "CLAUDE.md, path rules, skills, hooks, and headless CI each have their own post. Nobody writes about how they compose — or what happens when the stack drifts."
+summary: "CLAUDE.md, path rules, skills, hooks, and headless CI each have their own post. Nobody writes about how they compose or what happens when the stack drifts."
 ---
 
-Six months after setting up Claude Code for a team, the configuration is usually a mess. The `CLAUDE.md` has grown to 400 lines and nobody knows which parts are still accurate. The skills directory has three commands nobody uses. The path-scoped rules reference file patterns that were reorganized in Q1. The CI job runs `claude -p` and sometimes flags the same issue it flagged last week, sometimes doesn't.
+Six month after setting up Claude Code, the configuration of Claude Code is already inconsistent. The CLAUDE.md is at 400 lines long and few knows what is up to date or not. The skills directory has 3 commands that no one uses. The path-scoped rules refers to pattern files that got reorganized in Q1. And the CI job runs claude -p and sometimes finds the same issue as last week or none at all.
 
 The problem isn't any individual layer. It's that each layer was set up in isolation, and nothing enforces that they stay coherent.
 
@@ -14,7 +14,7 @@ Here's how the layers fit together and how to keep them from rotting.
 
 ## The four-layer stack
 
-Each layer has a different scope, load time, and failure mode. Using the wrong layer for a job isn't just inefficient — it creates silent misconfiguration that's hard to debug.
+Each level has different capabilities, performance characteristics, and failure modes. Incorrect use of levels leads to subtle, hard-to-track-down failures in programs.
 
 ```
 Layer 1: CLAUDE.md           — always-loaded, universal standards
@@ -23,7 +23,7 @@ Layer 3: Skills              — on-demand, invoked by model or developer
 Layer 4: Headless CI mode    — non-interactive, machine-readable output
 ```
 
-**Layer 1 — CLAUDE.md** loads for every session, regardless of what you're editing. That's its value and its cost. Put universal team standards here: naming conventions, error handling patterns, testing requirements, architecture decisions. Don't put task-specific procedures here — that's what skills are for. Don't put file-type-specific conventions here — that's what path rules are for.
+**Layer 1 - CLAUDE.md** is loaded for all sessions, regardless of the current task. This is where universal conventions are established. It defines how to name files, handle errors, write tests, and what architectural decisions will be made. It doesn’t contain instructions for specific tasks - that’s what skills are for - and conventions for specific file types - that’s the job of path layer.
 
 The three-level hierarchy matters for team environments:
 
@@ -31,7 +31,7 @@ The three-level hierarchy matters for team environments:
 - `.claude/CLAUDE.md` or root `CLAUDE.md` — project-level, shared with everyone who clones the repo
 - Subdirectory `CLAUDE.md` — directory-level, overrides project-level in that subtree only
 
-The failure mode teams hit most often: a new developer clones the repo and Claude Code doesn't behave as expected. The instructions are in `~/.claude/CLAUDE.md` instead of `.claude/CLAUDE.md`. User-level config isn't version-controlled. It never reaches the new developer. Move team-wide standards to project-level.
+The failure mode that I've encountered most frequently with teams is when a new developer clones the repository and finds that Claude Code doesn't work as expected. The issue is usually that the instructions are in `~/.claude/CLAUDE.md` rather than `.claude/CLAUDE.md`. The user-level configuration is not tracked in any repository and therefore no new developer setups Claude Code. Bring team-wide standards into the project.
 
 When `CLAUDE.md` grows unwieldy, split it with `@import`:
 
@@ -42,9 +42,9 @@ When `CLAUDE.md` grows unwieldy, split it with `@import`:
 @.claude/rules/deployment.md
 ```
 
-Each imported file is a single source of truth. Update once; it propagates everywhere. Without `@import`, you either maintain one 400-line file or duplicate the same rules across multiple directory-level files — both degrade over time.
+Each imported file is a source of truth. Each updated once, and it reflects everywhere. Without @import you are either stuck with one 400 line file or have repeated rules across files in different directories - both of which are worse.
 
-**Layer 2 — Path-scoped rules** in `.claude/rules/` load conditionally based on which files you're editing. This is the right layer for conventions that apply to a file type spread across many directories.
+**Layer 2 — Path-scoped rules** in `.claude/rules/` are loaded conditionally based on which files you're editing. This is the right layer for conventions that apply to a file type spread across many directories.
 
 ```markdown
 ---
@@ -64,7 +64,7 @@ The critical distinction from root `CLAUDE.md`: path rules load only when you're
 
 To verify a rule is actually loading, run `/memory` in Claude Code. It shows which configuration files are active in the current session. If a rule isn't listed, the glob didn't match — check the pattern. `/memory` is a diagnostic command; it doesn't trigger loading or refresh stale config.
 
-**Layer 3 — Skills** in `.claude/skills/` are on-demand workflows. Their descriptions are always in context so Claude knows they exist, but the full body loads only when invoked — either explicitly via `/skill-name` or automatically when Claude's description matching fires.
+**Layer 3 - Skills** located at `.claude/skills/` define on-demand workflows. The description of each skill is always present and visible to Claude, but the body of the skill is only loaded when it is explicitly invoked via `/skill-name` or implicitly when Claude's description matches certain criteria.
 
 ```markdown
 ---
@@ -82,9 +82,9 @@ Review the current git diff for:
 Report only confirmed findings with file path, line number, and remediation.
 ```
 
-`context: fork` runs the skill in an isolated sub-agent. The skill's output — which can be verbose — stays inside the subagent. The main context window receives only the summary. This is load-bearing for analysis or brainstorming skills that would otherwise fill the context with noise.
+`context: fork`: The skill gets executed in an isolated sub-agent. Whatever verbose results it writes, are hidden away in the subagent. Only the summary comes back in the context window. That way, analysis or brainstorming skills that otherwise would clutter the context with intermediate results, can be used without polluting the context.
 
-`allowed-tools: Read, Grep, Glob` is a security boundary. A read-only analysis skill that has `Write` or `Bash` access is a skill that could modify files if the model decides to. Restrict to what the skill actually needs.
+`allowed-tools: Read, Grep, Glob`: A read only analysis skill that has Write or Bash access is a potential attack vector. It could potentially write arbitrary files, if the model wanted to. Be conservative and only grant permissions the skill actually needs.
 
 The skills-vs-`CLAUDE.md` confusion is common:
 
@@ -118,9 +118,9 @@ claude -p \
   Do NOT re-report addressed issues."
 ```
 
-Including `PREVIOUS_FINDINGS` is not optional if you're running on every push. Without it, the same issue gets flagged on every push, generating duplicate comments until developers start ignoring all CI output. The de-duplication logic belongs in the prompt.
+Not including `PREVIOUS_FINDINGS` is not an option if you're running on every push. Same issue gets reported on every push until devs disable commenting entirely because all the notifications are noise. Dedupe logic should be in the prompt.
 
-One non-obvious constraint: don't use the same Claude session to review code it just generated. When Claude writes code, it builds context about why it made each choice. Asking it to review that code in the same session means it's reviewing against its own reasoning. Use a separate invocation for review:
+One subtle edge case to be aware of: never use the same Claude session to review code that it authored. Claude builds internal context about why it wrote the code that it did. It's not good practice to ask Claude to review code that it wrote in the same thread. You should use a different invocation for your code reviews
 
 ```bash
 # Session A: generate
@@ -132,31 +132,29 @@ claude -p "Review the authentication middleware for security issues and edge cas
 
 ## Plan mode: the decision is about ambiguity, not difficulty
 
-The common framing is "use plan mode for hard tasks, direct execution for easy ones." The better framing: use plan mode when multiple valid approaches exist and the choice affects other files; use direct execution when the correct approach is already known.
+The common framing is "use plan mode for difficult tasks, direct execution for easy ones". The better framing is to use plan mode for tasks where there is more than one valid approach, and the choice between them has downstream implications for other files.
 
-A difficult but well-defined bug fix — clear stack trace, single function, known cause — is direct execution. A seemingly simple feature request that could be implemented three different ways and touches multiple modules is plan mode.
+A straightforward but involved bugfix that touches one function and has a clear stack trace is direct execution. A seemingly simple feature request that could be implemented in three fundamentally different ways and touches on many subsystems is plan mode.
 
-Plan mode enforces this at the tool level: Edit, Write, and Bash are removed from Claude's available toolset during planning. It's not a prompt instruction to "think before acting." File modification is physically blocked until you switch to execution.
+Plan mode does not merely ask one to think before acting, but physically removes the ability to act until one has switched back to direct execution. Edit, Write, and Bash (the three broad classes of file modifications) are not available in plan mode. The hybrid pattern for large modifications is therefore
 
 The hybrid pattern for large changes:
 
 1. **Plan phase:** explore the codebase with the Explore subagent, evaluate approaches, design the strategy. The Explore subagent isolates verbose discovery output from the main context window.
 2. **Execute phase:** switch to direct execution with the strategy decided. File-by-file implementation with no re-planning needed.
 
-The failure mode the notes flag is real: starting direct execution and switching to plan mode only when complexity emerges. When the task description already states the complexity ("restructure the authentication module to support OAuth"), plan mode should be chosen immediately — not after the first surprise.
+The failure mode is: starting direct execution and switching to plan mode only when complexity emerges. When the task description already states the complexity ("restructure the authentication module to support OAuth"), plan mode should be chosen immediately, not after the first surprise.
 
 ## What drifts and how to catch it
 
-The stack decays in predictable ways.
+The stack decays in expected ways.
 
-**CLAUDE.md grows past its useful size.** Rules accumulate as the project evolves. Old rules stay because nobody is sure if they're still needed. The file hits 400 lines and the model starts losing track of rules buried in the middle. The fix is periodic review — at a minimum, whenever the team ships a major architectural change. Treat CLAUDE.md like a dependency: it needs updates when the codebase it describes changes.
+**CLAUDE.md becomes too big and rules get added for things that nobody knows if they are needed**. The file reaches 400 lines and the model forgets about the rules in the middle. The solution here is to review the file at least once every time the team makes a major architecture change and treats CLAUDE. MD as a dependency that needs to be updated if any of the code described in it changes.
 
-**Path rules reference patterns that no longer match.** The rule file says `src/api/**/*.ts` but the API layer was reorganized under `services/` six months ago. The rule silently stops loading. No error, no warning — it just doesn't apply. Run `/memory` after reorganizations to verify rules are still loading. If a rule isn't listed, the glob is stale.
+**The path rules point to patterns that no longer exist**. The rule says something like src/api// , ts but the API was moved to services/ six months earlier. The rule is no longer matched by anything, which makes it ineffective. The fix is to run / memory after every move to see if any of the glob patterns in rules match what they used to. If a given rule is not found, it should be removed.
 
-**Skills accumulate dead commands.** Teams add skills for one-time tasks and never remove them. The skills directory grows; Claude's description matching has more candidates to reason about. Audit skills quarterly: if a skill hasn't been invoked in three months and the task it covers hasn't changed, remove it.
+**Skills accrue dead commands**. The team adds a skill to do something once and then never removes it. The skills/ directory bloats up, and so does Claude’s ability to reason about it. The solution is to review skills quarterly, removing any that have not been used in three months and do not seem to be needed.
 
-**CI review output becomes noise.** Developers stop reading CI findings when the same issues appear repeatedly, or when the signal-to-noise ratio is low. Include previous findings in the prompt, require structured output with severity levels, and set a policy for what finding severity blocks merge. Without a merge policy, automated review becomes decoration.
+**CI review output becomes noise**. Nobody looks at the results because the same problems are always there, or because there are too many false positives to pay attention to real issues. The way to address this is to include previous results in the prompt when launching CI review job, structure the output to prioritize findings by severity level, and establish a policy that dictates what merge is allowed based on review results. Having no policy about CI review results basically allows anyone to merge anything.
 
-**The configuration stack belongs in code review.** Changes to `.claude/CLAUDE.md`, `.claude/rules/`, `.claude/skills/`, and CI workflow YAML should go through the same PR process as application code. If configuration changes aren't reviewed, they're not maintained — they're just accumulated.
-
-What I'm still working out: how to write a useful test for CLAUDE.md adherence. You can write evals for model output quality, but "did Claude follow the naming convention rule on this particular edit" is harder to measure systematically. I've been using spot-checks and periodic audits, but that doesn't scale past a certain team size.
+**The configuration stack belongs in code review.** Changes to `.claude/CLAUDE.md`, `.claude/rules/`, `.claude/skills/`, and CI workflow YAML should go through the same PR process as application code. If configuration changes aren't reviewed, they're not maintained (they're just accumulated).

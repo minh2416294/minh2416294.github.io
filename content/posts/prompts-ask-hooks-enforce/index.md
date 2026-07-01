@@ -1,20 +1,20 @@
 ---
-title: "your CLAUDE.md asks nicely; hooks make it true"
+title: "What is hook? Why agent need it instead of just a markdown file instruction"
 date: 2026-06-21
-draft: true
+draft: false
 tags: ["claude-code", "hooks", "ai-tooling", "agent-design"]
-summary: "An instruction in a markdown file is followed most of the time. When 'most of the time' isn't good enough, the rule belongs in code that runs before the tool does."
+summary: "A rule stated in the markdown is typically followed, but when it's not, that rule belongs in code that runs before the tool itself."
 ---
 
-I had a line in my global instructions that said never push to `main`. Claude followed it. Then one session, reasoning through a confusing git state, it proposed a `git push origin main` to "fix" a branch mismatch. It had read the rule. It decided this was the exception.
+I had a line in my global instructions saying that Claude should never push to `main `. Claude obeyed. Then, during some reasoning about a situation involving a problematic git history, it suggested a `git push origin main` to "fix" a branch mismatch. It had read the instructions and concluded correctly that this situation was an exception.
 
-That's the thing nobody tells you about the instructions file: it's a strong prior, not a constraint. The model reads `CLAUDE.md` every turn and follows it the overwhelming majority of the time. But "overwhelming majority" is a probability, and some rules can't live on a probability. A push to `main`, a refund over the limit, a write to a production database — the cost of the 1% is not 1% of the cost.
+The thing about the instructions file is that it serves as a strong prior for the model, rather than a strict set of constraints. The model processes and applies the CLAUDE. MD file on every interaction and generally follows it to the letter, with one or two caveats. However, "mostly" is not a reliable foundation for an absolute rule, so any instructions that have an element of risk in their enforcement are better stated elsewhere.
 
-So I split my agent config along exactly that line. Rules where probabilistic compliance is fine stay in the markdown. Rules where I need a guarantee moved into hooks — scripts the harness runs *before* the tool executes, outside the model's reasoning. The model can't argue with them because it never gets the chance.
+I split my agent config between the markdown file and actual hooks, with the latter being executed by the harness before any tool execution. This way, the model cannot second-guess them and try to "get around" them since it has not processed them.
 
 ## What the two layers actually are
 
-A `CLAUDE.md` rule is text the model reads and weighs against everything else in context. A hook is a `PreToolUse` (or `PostToolUse`, `Stop`, `SessionStart`…) script that the harness invokes around a tool call. It returns `deny`, and the call never happens. No reasoning, no exception, no "this case is different."
+A `CLAUDE.md` rule is text the model reads and weights against everything else in context. A hook is a `PreToolUse` (or `PostToolUse`, `Stop`, `SessionStart`…) script the harness runs around a tool call; it returns `deny`, and the call never happens. No reasoning, no exception, no "this case is different."
 
 Here's the same rule — don't edit on a protected branch — as a hook rather than a sentence:
 
@@ -28,19 +28,19 @@ if (@('main', 'master') -contains $branch) {
 }
 ```
 
-The difference from a `CLAUDE.md` line that says "don't edit on main" is total. The text version is advice the model usually takes. This version is a wall. The model proposes the edit, the harness runs the script, the script says no, and the edit doesn't land. It is not possible to talk the script out of it.
+The difference from a line in a `CLAUDE.md` saying "don't edit on main" is critical. The textual version is something the model is typically trained to obey. This version is a wall; the model suggests the edit, the harness executes the script, the script refuses, and the edit doesn't happen. It is not possible to convince the script otherwise.
 
-That's the whole value, and also the whole cost. A hook can't use judgement. It will block the edit even in a case where editing on `main` was genuinely fine. You're trading flexibility for certainty, and you only want that trade where certainty is worth more.
+This is the price you pay, and the value you gain. A hook can't make judgements. It will refuse the edit even in situations where editing on `main` would have been acceptable. You are trading flexibility for certainty, and you should only do that when certainty has value.
 
 ## The line I draw
 
 My rough rule for which layer a rule goes in:
 
-**Markdown (`CLAUDE.md` / path-scoped rules)** — preferences and conventions where being right 95% of the time is fine and the failures are cheap to fix: naming conventions, "explain technical terms," "no nested ternaries," "ask before structural changes." If the model occasionally misjudges one, I catch it in review and nothing is on fire.
+**Markdown** ( CLAUDE.md / path-scoped rules) - preferences and conventions that are generally right 95% of the time and benign if wrong: naming conventions, “explain technical terms”, “no nested ternaries”, “ask before doing destructive things”. If the model misses one, I catch it in review and nothing burns down.
 
-**Hooks** — anything where a single violation is expensive or irreversible: pushing to `main`, deleting with `rm -rf`, reading a `.env` or an SSH key, editing files on a protected branch. Also anything I want to *happen* unconditionally regardless of whether the model remembers to do it.
+**Hooks** - anything that is catastrophically wrong if done even once: pushing to `main`, `rm -rf`, reading `.env` or ssh keys, making edits on protected branches. Also, anything that needs to be done no matter what the model says.
 
-That last category is the half people forget. Hooks aren't only for blocking — `PostToolUse` is where I do work the model shouldn't have to remember. After every file edit, a hook runs the formatter and type-checker:
+That last one is the important one people miss. Hooks aren’t just about not-doing-things - they’re about doing-things the model may forget. Every time a file is edited, a PostToolUse hook runs to make sure they’re formatted and type-checked:
 
 ```powershell
 # PostToolUse on Edit|Write|MultiEdit — runs unconditionally
@@ -51,17 +51,15 @@ if ($file -match '\.py$') {
 }
 ```
 
-I could put "run ruff after editing Python" in `CLAUDE.md`. It would mostly work. But "mostly formats the code" is a strictly worse outcome than "always formats the code," and there's no judgement involved in running a formatter — so there's no reason to leave it to the model's attention budget. Deterministic work belongs in deterministic code.
+I could put "run ruff after editing Python" in `CLAUDE.md`. It would mostly work. But "mostly formats the code" is a strictly worse outcome than "always formats the code", and there's no judgement involved in running a formatter, so there's no reason to leave it to the model's attention budget. Deterministic work gets put in deterministic code.
 
-The same logic covers blocking dangerous shell commands. I have a `PreToolUse` hook on `Bash` that hard-denies a small list of patterns — `rm -rf`, `sudo`, `git push --force`, `chmod 777` — and also a handful of prompt-injection strings like `ignore previous instructions` and `you are now`. None of that is left to the model noticing the command is dangerous. The check runs before the command does.
+Same goes for the shell injection stuff; I've got a `PreToolUse` hook on `Bash` that hard-denies a short list of patterns - `rm -rf`, `sudo`, `git push --force`, `chmod 777`, etc etc - and a few prompt injection strings like `ignore previous instructions` and `you are now`. The model isn't getting to decide whether `rm -rf` is a dangerous command or not; it's being blocked before it can be run.
 
 ## The hook that exists because a hook didn't fire
 
-The case that taught me the most was a hook I wanted that the harness wouldn't reliably give me.
+The case that taught me the most was a hook I wanted but the harness couldn't reliably deliver.
 
-I run Claude Code in the desktop app. There's a `SessionEnd` event, and the obvious place to snapshot the git state at the end of a session is a `SessionEnd` hook. Except `SessionEnd` doesn't reliably fire when you close the desktop window — an ungraceful close skips it. The one moment I most wanted a guarantee was the one moment the lifecycle event wasn't guaranteed.
-
-So I moved the snapshot to the `Stop` hook, which fires at the end of every *turn*, and throttled it so it only does real work once every five minutes:
+I run Claude Code in the desktop app and there's a `SessionEnd` event. The obvious place to snapshot the git state at the end of a session is the `SessionEnd` hook, but `SessionEnd` isn't reliably called when you close the desktop window (it's an ungraceful close). At the very moment I needed it most, the lifecycle event wasn't there. So I moved to a Stop hook, which fires at the end of every turn, and I throttled it so it only did the actual work once every five minutes. So I moved the snapshot to the `Stop` hook, which fires at the end of every *turn*, and throttled it so it only does real work once every five minutes:
 
 ```powershell
 # Stop hook — fires every turn, throttled to once / 5 min.
@@ -74,12 +72,12 @@ if ($due) {
 }
 ```
 
-Now even if the window dies ungracefully, the last turn's git state is already on disk from the most recent throttled snapshot. The insight that generalizes: a hook is only a guarantee if the *event* it's attached to is a guarantee. `PreToolUse` fires before the tool, every time — solid. `Stop` fires every turn — solid. `SessionEnd` on a GUI app — not solid. Pick the event that actually fires, not the one whose name reads best.
+Now even if the window dies ungraciously, the last turn's git state is already on disk from the most recent throttled snapshot. The insight that generalizes: a hook is only a guarantee if the event it's attached to is a guarantee. Now, `PreToolUse` is always called before the tool, every time. `Stop` is called every turn. But `SessionEnd` on a GUI app isn't guaranteed to be called at all. Pick the event that actually happens, not the one whose name sounds most appealing.
 
 ## The one cost I didn't anticipate
 
-Hooks run silently, and a deterministic guardrail you can't see is its own small problem. When a `PreToolUse` hook denies a call, I need to *know* it denied it and why — otherwise the agent just appears to stall, or worse, quietly routes around the block and I never learn the rule fired.
+Hooks are silent, and a deterministic guardrail not announced is a problem of its own. When a PreToolUse hook denies a call, I need to know that it denied it and why, lest the agent act like it never happened or worse, bend around the rule without me knowing that it was even there.
 
-So every hook in my setup announces itself. Blocks return a loud `systemMessage` (`🛑 [PreToolUse] branch-guard BLOCKED Edit on protected branch 'main'`), and my instructions tell Claude to surface that line in chat rather than swallow it. The guarantee and the visibility have to ship together. A guardrail you can't observe is indistinguishable from a bug — the agent does something unexpected and you can't tell whether a rule fired or the model just misbehaved.
+That's why all my hooks loudly declare themselves. Blocks emit a systemMessage (🛑 [PreToolUse] branch-guard BLOCKED Edit on protected branch 'main') and the instruction set tells Claude to report those lines in chat, rather than ignore them. The ability to observe the system is critical to the hook's utility - a guardrail unseen is no different from a bug, the agent does something unexpected, and there is no way to distinguish between the two.
 
-What I'm still unsure about: where the line sits for rules that are *mostly* deterministic but have rare legitimate exceptions. "Don't add a new dependency without asking" is too important for a plain `CLAUDE.md` line, but a hard hook-level block would be wrong too — sometimes adding the dependency is the right call and I'd just be fighting my own wall. The honest answer is probably a hook that returns `ask` instead of `deny` — a forced prompt rather than a forced stop — but I haven't worked out which of my markdown rules deserve to be promoted to that middle tier and which are fine staying as advice.
+What I'm not sure about is calibration - the art of writing rules that are mostly deterministic but occasionally allow exceptions. "Don't add a new dependency without asking" is too important to leave as markdown, but a hard-coded hook would wrongly penalize those times I actually do want to add a new dependency. The answer is probably a third category of instruction, one that asks rather than blocks, but I'm not certain what guardrails should promptfully ask the user for forgiveness.

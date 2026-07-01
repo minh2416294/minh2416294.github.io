@@ -1,16 +1,16 @@
 ---
-title: "two bugs in my own Claude Code guardrails"
+title: "2 bugs in my agent guardrails"
 date: 2026-06-10
-draft: true
+draft: false
 tags: ["claude-code", "hooks", "ai-tooling", "developer-tooling"]
 summary: "A guardrail that blocked the workflow it was meant to protect, and a permission rule that was silently dead. Both were bugs in my own config."
 ---
 
-I have a rule that Claude can't edit files while I'm on `main`. It's enforced by a hook, not a prompt — a PowerShell script that runs before every `Edit` and `Write`, checks the branch, and returns a `deny` if the branch is protected. The point is to force all work onto feature branches in git worktrees, which is the one git discipline I actually care about.
+I have a rule that Claude can't edit files on my computer while I'm on `main`. It's enforced by a hook, not a prompt: a powershell script that runs on every Edit/Write command, checks the branch, and denies the operation if it's protected. The intention was to enforce working in feature branches via git worktrees, which is the only git discipline I care to follow.
 
-It blocked me from working in a worktree. The guardrail punished the exact workflow it existed to enforce.
+It prevented me from working in a worktree. The guardrail denied the very workflow it was designed to enforce.
 
-That bug, and a second one I found later, are the reason I stopped thinking of my agent config as "rules I wrote" and started thinking of it as "code that can be wrong." Guardrails are code. Code has bugs. Mine had two worth writing down.
+This incident, along with another one I'll describe later, is what made me stop thinking about my agent config as "rules I've written", and start thinking about it as "software that may have bugs". Guardrails are code. Code is prone to errors. My guardrails had two notable ones.
 
 ## The branch-guard that blocked feature branches
 
@@ -26,13 +26,13 @@ if ($protected -contains $branch) {
 }
 ```
 
-Read where `git rev-parse` runs. It runs in the session's current directory. I start every Claude Code session from the main project directory — that's deliberate, because starting inside a worktree subdirectory makes the harness re-ask for tool permissions it would otherwise inherit. So the session CWD sits on `main`.
+Read where `git rev-parse` runs. It is run in the current directory of the session. I always start my code sessions from the main project directory because starting from a worktree subdirectory caused the harness to reask for permissions for tools it would have automatically inherited otherwise. The session cwd is main
 
-When I create a worktree on a feature branch and ask Claude to write a file *into that worktree*, the hook doesn't look at the worktree. It runs `git rev-parse` in the session CWD, reads `main`, and denies the write. The file being edited was on `feat/whatever`. The hook never looked at the file.
+When I create a worktree on a branch and ask Claude to write a file into that worktree, the hook does not look at the worktree. It runs git rev-parse in the session cwd and rejects the write because that resolves to main . The file the user is trying to write is on feat/whatever; the hook has no awareness of that.
 
-The guard's model of "what branch am I on" was the ambient process state. The thing it was actually guarding was a file. Those two are different the moment you use worktrees — which was the entire workflow it was supposed to protect.
+The guard's understanding of what branch it is on is the ambient process state. What the guard is actually guarding is a file. Those are two different things once you start using worktrees, which is exactly the scenario this guard was supposed to protect against.
 
-The fix is one line: resolve the branch from the directory of the file being written, not from the session.
+The fix is obvious: resolve the branch from the file being written to rather than the session cwd.
 
 ```powershell
 # before — reads the branch of the session's CWD
@@ -42,38 +42,38 @@ $branch = git rev-parse --abbrev-ref HEAD 2>$null
 $branch = git -C (Split-Path -Parent $file) rev-parse --abbrev-ref HEAD 2>$null
 ```
 
-`git -C <dir>` runs the command as if from that directory. Now a write into a worktree on a feature branch resolves to that feature branch and passes. A write into the main-rooted tree still resolves to `main` and still blocks. The guard finally guards the file instead of the process.
+`git -C <dir>` runs the command as if you were in that directory. Now a write into a worktree on a feature branch resolves to that feature branch (and passes), while a write into the main-rooted tree resolves to main (and still blocks). The guard finally guards the file, and not the process.
 
-The lesson is cheap to state and easy to get wrong: a guardrail's notion of *where it is* has to match the unit it actually controls. The hook controls file edits, so it has to ask about the file's branch, not the shell's branch. I'd written "block edits on main" and quietly assumed CWD and the file's branch were the same thing. Worktrees are precisely the case where they aren't.
+The lesson is cheap to state and easy to make a mistake with: where-ever a guardrail thinks it is must be the same as the unit of control it is trying to guard. The hook guards file edits, and so it must evaluate the branch of the file being edited, and not the branch of the shell. I had written "block edits on main" and then assumed that the CWD and the file's branch were the same thing. Worktrees are the case where they are not.
 
 ## The permission rule that was never reached
 
-The second bug didn't block anything. It was the opposite failure — a rule that looked like protection and did nothing.
+The second bug was a silent failure. The permission rule was written, but had no effect.
 
-My `settings.json` has three permission buckets: `deny` (never run), `ask` (prompt me), and `allow` (run silently). For a while I had in-directory file mutations like `mv` and `sed -i` in the `ask` bucket. I wanted a prompt before Claude moved or rewrote files in place. Reasonable.
+My `settings.json` defines three permission categories: deny (never run), ask (prompt me), and allow (run silently). For a while I had in-directory file mutations (mv, sed -i) fall into ask, meaning that I would be prompted before Claude made any in-place changes. Seems sensible.
 
-They never prompted. They just ran.
+What actually happened is that I was never prompted. The in-directory file writes always ran.
 
-I only found out because I sat down and wrote a 25-case permission self-test — a script that fires representative commands and records whether each was denied, prompted, or run silently. 21 of 25 behaved as written. The 4 that didn't were all the same shape: in-directory writes I'd put in `ask` were running silently.
+I found the bug while writing a 25-case permission self-test, a script that runs through a representative sample of commands and builds a report of which were denied, prompted, or run. 21/25 worked as intended. The four that failed were all in-directory writes I'd put in ask - they were all running silently as if they were in allow.
 
-The cause is evaluation order. The permission gates don't fire in the order I listed them in the file — they fire in a fixed pipeline:
+The cause is obvious in hindsight: the permission rules are evaluated in the order of the allow/deny blocks in the code, not the order that I had placed them in my `settings.json`
 
 ```
 PreToolUse hook → deny → mode → sandbox → ask → allow
 ```
 
-I run with the sandbox on (`enabled: true`, `autoAllowBashIfSandboxed: true`) and `filesystem.allowWrite` includes `"."` — the current directory. So any command that only writes inside the project directory is auto-allowed by the **sandbox** gate. The sandbox sits *before* `ask` in the pipeline. By the time evaluation would have reached my `ask` rule, the sandbox had already approved the command and the decision was made. The `ask` entry was dead config. It read like a guardrail and was a no-op.
+I run with the sandbox on (`enabled: true, autoAllowBashIfSandboxed: true`) and `filesystem.allowWrite` includes "." - the current directory. So any command that only writes inside the project directory is auto-allowed by the sandbox gate. Sandbox comes before ask in the pipeline; by the time execution would reach my ask rule, the sandbox had already allowed the command and made the decision. The ask entry was dead config, a guardrail that no longer guarded anything.
 
-This is worse than having no rule, because no rule is honest about offering no protection. A dead rule looks like a tripwire that isn't connected to anything.
+It's worse than useless, really - at least, worse than not having the rule at all - because the absence of a rule is honest. A dead rule is like a tripwire that wasn't hooked to anything.
 
-The tradeoff was the interesting part. Two options: keep the sandbox and accept the silence, or turn off `autoAllowBashIfSandboxed` to make `ask` reachable again. I kept the sandbox. The containment is the stronger guarantee — those commands physically can't write outside the project directory regardless of what the prompt rules say — and `rm -rf` is still hard-blocked by a separate `PreToolUse` hook that runs at the very front of the pipeline, ahead of the sandbox. Restoring the prompt would have cost me silent auto-approval on every read-only command too, which is most of what makes the sandbox worth running.
+The real trade-off came between keeping the sandbox on, but accepting that all the commands I wanted to allow were silently auto-allowed, or turning off `autoAllowBashIfSandboxed` to restore my guardrail. I chose to keep the sandbox, but the containment it provided was still a better guarantee - those commands physically can't write anywhere outside the project directory, sandbox or no sandbox, because of the separate `PreToolUse` hook that runs at the front of the pipeline, before any of the prompt-based rules. Turning them off would've been a silent allow-all for every read-only command, which is most of the commands I use the sandbox for anyway. (Not a deal breaker, but not an improvement either.)
 
-So I deleted the dead `ask` entries instead of trying to resurrect them. Re-adding them wouldn't have worked — they'd still be downstream of the sandbox. The only way to force a prompt on a sandboxed in-dir command is a `PreToolUse` hook that returns `ask`, because hooks run at gate one, before everything. The fix for "my rule is at the wrong layer" is to move it to the right layer, not to write it more emphatically.
+So I deleted the dead `ask` entries rather than trying to un-break the sandbox. Reinstalling them would've been ineffective - they'd be running after the sandbox and would only ever trigger on commands that the sandbox didn't already allow. The only way to add in-directory safety checks is to write a `PreToolUse` hook that returns ask, because hooks run at the front of the pipeline - the fix for "my rule is at the wrong level" is always to move it to the right level, not to shout harder.
 
 ## What both bugs have in common
 
-Both are the same mistake wearing different clothes. The branch-guard assumed its environment (CWD) matched the thing it controlled (a file). The `ask` rules assumed they'd be reached at all. In both cases I'd written something that was *correct as English* — "don't edit on main," "ask before `mv`" — and wrong as code, because I hadn't checked where it actually sat in the system that runs it.
+Both times, I made the same class of error: I wrote a rule that acted as if it was in a certain place in the system, but it wasn't. The branch-guard assumed its environment (the CWD) was always going to be in a particular place relative to the file it was trying to modify, but that wasn't always the case. The ask rules thought they'd be run on every relevant command, but they were overridden and dead. In both cases, I had correct English sentences - "don't edit on main branch", "ask before mv" - that weren't correct code because I hadn't taken into account all the places the rule had to be true.
 
-The thing that caught the second bug and not the first was a test. The branch-guard I found the slow way, by hitting it during real work. The dead permission rules I found because I'd written a self-test that exercised the whole permission matrix and diffed intent against behavior. The self-test is the part I'd recommend to anyone running a non-trivial agent harness: guardrails deserve the same adversarial testing as features, because "it's in my config" and "it fires" are not the same claim.
+What made the second bug easier to spot than the first was a test. The branch-guard was discovered the slow way - by stumbling onto it while using the tool. The dead permission rules were found because I'd written a self-test that walked through the permission matrix, checking that all the intent rules were actually installed. The self-test is the thing I'm advocating for here; when I started working on this, guardrails were features, not separately-security-audited things. I think a lot of people make this same class of error when writing prompt-based rules because they can't easily observe all the different execution paths that apply to a rule.
 
-What I'm still chewing on: my permission pipeline now has six stages, plus eight hooks and six path-scoped rule files, and I'm not sure I can hold the whole evaluation order in my head anymore. The honest fix might not be smarter individual rules — it might be making that 25-case self-test a committed artifact I re-run whenever I touch the config, the way I'd never ship application code without tests but somehow shipped a permission model on vibes for months.
+The thing I'm worrying about is that now I have six phases in my permission pipeline plus eight hooks and six path-scoped rule files, and I can barely keep track of the evaluation order anymore. The next step isn't necessarily more clever rules - it may just be to make that 25-case self-test a thing I commit along with the config, the way I would never write an application without also writing tests for it.
