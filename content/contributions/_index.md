@@ -1,6 +1,6 @@
 ---
 title: "Open-source contributions"
-description: "Merged PRs and issues I've contributed to."
+description: "My contributions to Agentic AI Coding Repositories"
 contributions:
   - repo: "mastra-ai/mastra"
     summary: "Cover state typing in dowhile/dountil loop conditions"

@@ -1,26 +1,24 @@
 ---
-title: "your RAG eval is lying to you"
+title: "Pitfalls in RAG Evaluation: What Your Benchmarks Aren't Telling You"
 date: 2026-04-01
-draft: true
+draft: false
 tags: ["rag", "retrieval", "llm-evaluation", "ai-engineering"]
 summary: "A 0.91 faithfulness score doesn't mean your RAG pipeline works. Most eval panels can't see the layer that's actually broken."
 ---
 
-My RAG pipeline had a faithfulness score of 0.91. Users were still getting wrong answers.
+My RAG pipeline had a faithfulness score of 0.91 - but users were getting incorrect answers.
 
-It took two weeks to figure out why. The short version: I was measuring the wrong thing. The retriever was returning plausible-looking chunks that didn't contain the actual answer. The generator was faithfully summarizing those chunks. Every metric said the system was working. The system was not working.
+It took me two weeks to realize what the problem was. In short, I was evaluating the wrong thing - the retriever was confidently returning “plausible” chunks of text that didn’t include the answer, and the generator was faithfully summarizing those chunks. Everything looked correct according to standard evaluation metrics - but the system wasn’t actually working correctly.
 
-Here's what I learned about where RAG actually breaks, and how to see it.
+Below are some insights on where RAG pipelines can fail, and how to spot those failures.
 
 ## The metric most teams track, and what it misses
 
-Faithfulness measures whether the generated answer is grounded in the retrieved context. It's a generation-side metric. A high faithfulness score means the model isn't hallucinating relative to what it was given.
+Faithfulness measures whether the generated answer is consistent with the retrieved context. It's a generation-side metric, and a good faithfulness score indicates that the model isn't hallucinating compared to the retrieved documents.
 
-It says nothing about whether what it was given was correct.
+It says nothing about whether those retrieved documents are accurate compared to ground-truth answers. The metric you actually want to look at is context recall: the ratio of ground-truth answer content that appears in the retrieved chunks. If context recall is low, it doesn't matter how faithful the generation is- your model is faithfully summarizing the wrong documents.
 
-The metric you also need is **context recall**: the fraction of ground-truth answer content that actually appeared in the retrieved chunks. If context recall is low, it doesn't matter how faithful the generator is — it's faithfully summarizing the wrong material.
-
-Most teams run faithfulness. Almost nobody runs context recall at launch. The failure mode is invisible until users start complaining.
+Most teams measure faithfulness on generation. Few measure context recall on retrieval at all, and the failure mode is often not obvious until users complain.
 
 ```
 What most eval panels look like:
@@ -30,31 +28,31 @@ What most eval panels look like:
   ✗ Context precision (how much retrieved content was actually useful?)
 ```
 
-The top two metrics live on the generation side. The bottom two live on the retrieval side. If you only run the top two, you have no visibility into whether your retriever is working.
+The top two are on the generation side; the bottom two are on the retrieval side. If you just run the top two, you can’t assess if your retriever is working properly.
 
 ## Why retrieval fails silently
 
-A retriever can fail in ways that look like success.
+A retriever can fail in a way that makes it appear to succeed. Imagine asking a question about a contract, for example, "What are the termination clauses in the ACME contract?"
 
-Consider a query like "What are the termination clauses in the ACME contract?" Your retriever returns chunks about termination — but from the wrong contract, or from a general policy document instead of the specific filing. The chunks are semantically relevant to "termination clauses." The cosine similarity scores are high. The reranker promotes them confidently.
+Your retriever returns chunks of text that happen to mention termination clauses, but from a different contract or a generic policy file. Your chunks have high relevance to your query in terms of semantic similarity or even keyword matching. Your reranker confidently promotes these false positives.
 
-The generator produces a fluent, grounded answer about termination clauses. Faithfulness: 1.0. The answer is wrong.
+Your generator produces a coherent answer about termination clauses using the retrieved documents. Your faithfulness metric is 1.0 because the generator didn't hallucinate. However, you are still wrong.
 
-This is the retrieval recall vs. end-to-end accuracy gap. A 2026 analysis of chunking strategies found that semantic chunking achieved 91.9% retrieval recall — but only 54% end-to-end accuracy on the same benchmark. The retriever was surfacing relevant-looking material. The answers were still wrong, because chunks averaged 43 tokens — too small to contain a complete, usable answer.
+This is the retrieval recall versus end-to-end accuracy problem. The evaluation of chunking methods in 2026 demonstrates the issue well. The best method achieves 91.9% retrieval recall but only 54% end-to-end accuracy on the benchmark. Even though the retriever retrieved many relevant chunks, the answers were wrong because the chunks were too small to contain a full answer. On average, each retrieved chunk consisted of only 43 tokens.
 
-High retrieval recall does not imply high answer quality. They are different things, measured differently, and optimizing one does not move the other.
+In short, high retrieval recall is not necessarily indicative of high end-to-end accuracy. The two metrics are fundamentally different, and optimization for one does not imply optimization for the other.
 
 ## The layered failure taxonomy
 
-Before you can fix a RAG pipeline, you need to know which layer broke. There are four, and they fail independently:
+Before you can fix a RAG pipeline, you have to know which one is broken. There’s four possible layers, each of which can be broken in different ways.
 
-**Layer 1 — Chunking.** Chunks are too small (context rot: the answer is split across chunk boundaries), too large (the retrieved chunk contains the answer but also 800 tokens of noise that dilutes it), or structured incorrectly for the document type (tables embedded in PDFs parsed as garbled text).
+**Layer 1 — Chunking.** The chunks are too small (context rotation: the answer is in another chunk) , too big (retrieved chunk contains the answer but also 800 irrelevant tokens which suppress it) or of the wrong structure (tables embedded in PDFs parsed as text)
 
-**Layer 2 — Retrieval.** The embedding model captures semantic similarity but misses exact matches. A query for "Section 4.2(b)" retrieves conceptually related content instead of the literal clause. BM25 handles this; dense embeddings often don't. A 2026 peer-reviewed study on financial documents found BM25 outperformed `text-embedding-3-large` on numeric and citation-heavy queries — and that table structure mismatch accounted for 73% of retrieval failures in that corpus.
+**Layer 2 — Retrieval.** The dense vectors capture semantic similarity but not verbatim matches which is critical for queries like”Section 4.2(b)” which traditional IR models like BM25 capture better than embeddings (A 2026 pior art study on financial documents found BM25 outperformanced text-embedding-3-large on numeric and citation queries by a statistically significant margin). Table structure mismatches were the cause of 73% of retrieval failures in that domain.
 
-**Layer 3 — Context assembly.** Retrieved chunks arrive without the context that makes them interpretable. A chunk reading "revenue grew by 3% over the previous quarter" is ambiguous without knowing which company, which quarter, and what the baseline was. Traditional RAG strips this context at chunking time and never recovers it.
+**Layer 3 — Context assembly.** Context is lost around retrieved chunks: If a chunk says “revenue grew by 3% over the previous quarter” the model has no way of knowing which revenue, which quarter or which comparison it is referring to since that information was trimmed during chunking. This renders the chunk effectively useless as the model cannot determine what the actual fact even is.
 
-**Layer 4 — Generation.** The model hallucinates, refuses, or misinterprets even when given good context. This is the layer most teams blame first. It's usually the last place the real problem lives.
+**Layer 4 — Generation.** The model hallucinates, refuses to answer or misconstrues the context. This is the easiest layer to blame but the last to investigate since it is rare that the actual problem is in this layer.
 
 ## What contextual retrieval actually fixes (and what it doesn't)
 
@@ -99,17 +97,17 @@ revenue was $314 million.
 The company's revenue grew by 3% over the previous quarter.
 ```
 
-Anthropic reports this reduces retrieval failures by 49% combined with BM25, and 67% with reranking added. At $1.02 per million document tokens with prompt caching, it's cheap enough to run on most corpora.
+Anthropic reports that this reduces retrieval failures by an average of 49% with BM25 and 67% with BM25 plus reranking on their benchmark. With a cost of $1.02 per million document tokens with prompt caching, it can be afforded on most corpora.
 
-What it fixes: Layer 3. Chunks are no longer context-free.
+This only fixes layer 3. Chunks are now not context-free.
 
-What it doesn't fix: chunking boundaries (Layer 1), domain-specific retrieval failures like table parsing (Layer 2), or generation quality (Layer 4). It's one fix for one layer.
+It does not address layer 1 (chunking boundaries), layer 2 (domain-specific issues such as table parsing), or layer 4 (generation) – only one type of issue in one layer.
 
 ## The hybrid retrieval floor
 
-If you're running pure dense vector search, you have a known gap: exact matches, technical identifiers, and numeric queries. BM25 handles these by matching terms directly rather than semantically.
+If you are doing pure dense vector search, you know what you are missing: exact matches, identifiers and numeric queries. In BM25, these things are matched directly via tokens.
 
-The production floor for retrieval is hybrid: dense embeddings for semantic similarity, BM25 for lexical precision, results combined with Reciprocal Rank Fusion:
+The production floor is therefore hybrid: dense for semantics, BM25 for identifiers, combined by Reciprocal Rank Fusion:
 
 ```python
 from rank_bm25 import BM25Okapi
@@ -154,7 +152,7 @@ def hybrid_search(
     return [(chunks[i], fused[i]) for i in top_indices]
 ```
 
-This isn't a silver bullet. On most general-purpose corpora, hybrid modestly outperforms either method alone. On specific document types — financial tables, legal citations, code — the gap is large enough to matter.
+This isn't a silver bullet. On a general set of corpora, hybrid approaches are modestly better than either method alone. But on certain classes of documents - tables in financial reports, legal citations, computer code - the improvements are spectacular.
 
 ## The eval panel that actually catches failures
 
@@ -186,12 +184,12 @@ Thresholds worth targeting before shipping:
 
 If faithfulness is high but context recall is low, your retriever is broken, not your generator. Fix chunking and retrieval before touching the prompt.
 
-If context precision is low, your retrieved chunks contain too much noise. Consider a reranker, tighter chunk boundaries, or both.
+If your context precision is low, your retrieved chunks are too noisy. Try a reranker, or smaller chunks, or both.
 
 ## What I'd do differently
 
-Start with the eval panel, not the pipeline. Define what "working" means in terms of all four metrics before writing any retrieval code. The layer you can't measure is the layer you'll debug for weeks.
+Start from the eval panel, not the pipeline. Know what "working" means in terms of all four metrics before writing any retrieval code. The layer you cannot measure yourself will become the layer you waste weeks chasing ghosts in production.
 
-And treat chunking as a first-class engineering decision, not a default. The chunk size and strategy that works for a markdown documentation site will not work for a PDF of financial tables. The document type determines the chunking approach, not the framework default.
+And really think through chunking as an engineering decision, not a default. The chunk size and strategy will vary wildly depending on the document type. Markdown pages, PDFs of SQL queries, or scanned financial tables will need different treatment at chunking time.
 
-What I'm still unsure about: whether contextual retrieval's LLM-generated context adds noise when the chunk is genuinely self-contained — a short factual sentence, say. The context prepend might hurt precision on chunks that didn't need enriching, and I haven't found a clean way to detect that at indexing time.
+The thing I'm still not sure of is whether contextual retrieval's LLM-generated context is adding noise to the signal, if the chunk was self-contained. Say, if the chunk has a single factual answer, the prepend context makes its precision artificially low, but you can't know that at indexing time.

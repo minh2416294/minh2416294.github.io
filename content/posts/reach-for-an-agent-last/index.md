@@ -1,16 +1,14 @@
 ---
-title: "reach for an agent last, not first"
+title: "Picking the right LLM architecture"
 date: 2026-03-21
-draft: true
+draft: false
 tags: ["llm-architecture", "agents", "system-design", "ai-engineering"]
-summary: "A decision framework for picking LLM architecture by asking what failure costs first — and why agents are the right answer less often than you think."
+summary: "A decision framework for picking LLM architecture by asking what failure costs first and why agents are the right answer less often than you think."
 ---
 
-The first question I ask when someone shows me their agent architecture isn't "does it work?" It's "what happens when it doesn't?"
+The first question I ask when shown an agent architecture is not "does it work?" It is "what happens when it does not?"
 
-That question changes the decision almost every time.
-
-Most teams reach for agents because the task feels complex. Complexity is the wrong signal. The right signal is whether the steps are knowable before you see the input. If they are, you don't have an agent problem. You have a workflow problem — and workflows are cheaper, faster, and debuggable in ways agents simply aren't.
+That question can turn a positive response into a negative one. Most people are thinking of agents as a way to tackle a really hard problem. Complexity is not the litmus test for an agent, however. If the steps are knowable before seeing the input, then you have a workflow, not an agent. A workflow is much easier to build, execute, and debug than an agent.
 
 Here's how I actually think through it.
 
@@ -21,16 +19,17 @@ Here's how I actually think through it.
 If yes: it's a workflow. Pick the simplest workflow shape that fits.
 If no: it might need an agent. But not yet — there are cheaper stops first.
 
-This sounds obvious. It isn't. I've seen teams reach for multi-agent systems to handle customer support tickets, when a routing workflow with three branches would have served 95% of the volume at a tenth of the cost. The task felt open-ended. It wasn't.
+This seems obvious, but I've seen teams fall into the "multi agent" trap for customer support tickets, when a 3-way routing would handle 95% of the volume at 1/10th the cost and complexity. The task was not open-ended, but it wasn't obvious until we started diagramming.
 
 ## The cost-of-failure lens
 
-Before picking an architecture, I run one more check: what does wrong output actually cost?
+When choosing an architecture, I'm going to do one more reality check: what is the cost of getting wrong answers?
 
-- Financial loss, compliance breach, irreversible action → bias toward control. Workflows, hooks, human sign-off. Not agents.
-- Wrong output is cheap and recoverable → more flexibility is affordable.
+Irreplaceable work, a regulatory requirement, or something that can't be undone - these are reasons to prefer a controlled process over an agent. A workflow with checkpoints and human review is safer ground if an error in thinking leads to catastrophic consequences.
 
-This matters because agents fail in open-ended ways. A workflow fails at a known point — step 2 produced garbage, so step 3 is also garbage, and you can trace it. An agent can loop, drift from the goal, hallucinate tool arguments, or exhaust its context window without a clean failure signal. When failure is expensive, that unpredictability is a liability you're paying for whether you know it or not.
+On the other hand, if mistakes are easily undone or have little downside, I'm much more tolerant of "wrong" output from an agent.
+
+In short: agents' ability to go off-road is much less valuable when wrong steps lead to irreversible outcomes. A workflow failure at a specific step has predictable consequences - bad results at step 3 were caused by some kind of error in step 2, and you can see how step 3's output was produced. An agent can produce invalid output in any number of ways: loops, tangents, hallucinations, or just running out of thinking budget before returning a result that doesn't account for all relevant information. Wrong answers from an agent have more varied consequences, and when those consequences are expensive to repair, I'll favor a workflow with clearer stopping points.
 
 ## The climb, in order
 
@@ -44,47 +43,50 @@ Tier 3:  Single agent     — open-ended task, unknown path, exploration
 Tier 4:  Multi-agent      — 2+ distinct expertise domains, parallel exploration, context overflow
 ```
 
-Most tasks land on Tier 1 or Tier 2. Support FAQ with grounded answers? Tier 1. Translation pipeline across 30 languages? Tier 2 prompt chain with a parallel fan-out for the per-language step. Code review across multiple dimensions? Tier 2 parallelization — separate calls for security, performance, and style beats one diffuse call every time.
+Most tasks fall in Tier 1 or Tier 2. Supporting an FAQ line with grounded responses is T1. Same with the translation pipeline, which has a T2 prompt chain plus a parallel fan out for the per language substeps. Code reviews across multiple dimensions are T2 parallelized (security, performance, style) rather than one big multi-layered prompt each time.
 
-Agents enter when the path is genuinely unknown until runtime: research, debugging, open-ended coding. Not because they're powerful. Because nothing below them can handle it.
+The use case for agents is where the path is not apparent at design time: research, debugging, open ended coding. It's a capability that's needed when there isn't anything lower tier that can handle the task.
 
-## The multi-agent question specifically
+## Consider the multi-agent question specifically
 
-Multi-agent is where I see the most expensive mistakes.
+Multi-agent is where I think people make most expensive mistakes.
 
-A 2026 paper (arXiv 2604.02460) found that when you control for total compute — same number of thinking tokens — single agents match or beat multi-agent systems on multi-hop reasoning across three model families and five MAS architectures. The reason most benchmarks show MAS winning is that they give MAS more total compute. Control for that, and the gap shrinks or inverts.
+A 2026 paper (arxiv 2604.02460) finds that, when controlling for total compute (i.e., number of tokens allocated to thinking), single agents perform as good or better than multi-agent systems on multi-hop reasoning tasks across three model families and five mas architectures. The reason most benchmarks find MAS useful is precisely because they are allocated more total compute. Controlling for that variable, it disappears.
 
-The practical implication: multi-agent isn't a capability upgrade. It's a distribution of compute. And distributing compute has coordination overhead — context management at the supervisor, inter-agent communication, emergent behavior that's hard to reproduce and harder to debug.
+The practical implication is that multi-agent is often primarily a way to distribute compute rather than a capability improvement; it has costs associated with context management at the supervisor level and emergent behaviors that can be exceptionally difficult to reverse engineer.
 
-I reach for multi-agent only when I can answer yes to at least one of:
-1. The task spans 2+ genuinely distinct expertise domains (legal + financial + compliance, not just "it's complex").
-2. The task requires parallel exploration of truly independent directions simultaneously.
-3. The task exceeds a single agent's context window in a way that can't be solved by summarization or context editing.
+My personal rule of thumb for using multi-agent at all is if one of more of the following is true:
 
-The cost is real: multi-agent systems use roughly 10–15× more tokens than a single agent on equivalent tasks. That's not a folk heuristic — it follows from quadratic token accumulation across the agent loop. A 20-step agent loop can cost 50× more than a single-pass baseline once you account for history being re-sent on every call.
+1. The task requires multiple genuinely distinct areas of expertise (law + finance + compliance, etc.) rather than just "is complicated"
+2. The task requires genuine parallelization of distinct lines of thought
+3. The task requires more context than fits in a single model's context window (or can be summarized/transposed via context editing)
 
-Before justifying that cost, I ask whether single agent + skills would do the job. Usually it would.
+MAS is often substantially more expensive (in tokens) than using a single model. The number is ballpark 10–15x but could be higher depending on the task. This is primarily because of the agent loop; the overhead of repeatedly querying the model adds up quadratically to the number of hops. A 20 step agent loop (not uncommon) has a 50x overhead vs a single model query once you start including the cost of history in each response.
+
+Whatever you're trying to accomplish with MAS, first ask yourself: can a single model do it with skills? Because it almost certainly can.
 
 ## The thing nobody says about observability
 
-Everyone agrees observability matters for LLM systems. What's underappreciated is that it's not optional at any tier above Tier 1.
+It is no secret that observability is critical for the functioning of large-scale LLMs. What is less apparent is that it is no longer optional beyond tier 1.
 
-Standard application monitoring — request latency, error rates, uptime — tells you almost nothing about why an LLM system failed. You need:
-- Every prompt sent and every response received
-- Which branch, tool, or agent was chosen and why
-- What was retrieved for each generation
-- Token consumption per call and per turn
+The type of generic request latency, error rate, and uptime metrics one usually gets from conventional application performance monitoring solutions offer limited insight into the root causes of issues in an LLM-based system. In order to effectively troubleshoot and optimize such a system, one would need to collect:
 
-Non-deterministic systems fail silently. An agent that drifts from the goal doesn't throw an exception. A retrieval step that returns irrelevant docs doesn't 500. A routing classifier that misclassifies 8% of tickets looks like a working system until someone audits the output. You can only catch these things if you're tracing them.
+- All prompts provided and responses generated by the system
+- Which branches, tools, or agents were called for a particular prompt and why
 
-I've seen teams skip observability infrastructure to ship faster, then spend weeks debugging a multi-agent system that "works most of the time." A well-observed Tier 2 workflow beats an unobserved Tier 3 agent almost every time — not because it's smarter, but because you can see what it's doing.
+- What information was retrieved for a given response
+- The token usage per call and per turn
+
+Non-deterministic behavior is a common source of silent failures. A hallucinating agent will not self-correct, even if it strays miles away from the intended task, and a retrieval step that returns irrelevant documents will not throw an error. Routing classifiers, too, are not perfect, and if a support ticket gets routed down the wrong agent chain, it may be challenging to detect until an audit. These examples highlight the importance of observability in LLMs - without it, debugging becomes guesswork.
+
+I've observed companies choose to forgo investing in observability in order to accelerate product development. This can lead to weeks of debugging a productionized tier 2 agent system before identifying a systemic issue in the agent's decision-making logic. A properly instrumented tier 2 agent would substantially outperform a non-observable tier 3 agent in most cases, as the value of the tier 2 agent's responses would be immediately apparent.
 
 ## Where I land
 
-The default should be skepticism toward complexity, not excitement about it. Agents are powerful. They're also expensive, unpredictable, and hard to debug when things go wrong. The question isn't whether your task is complex. It's whether the simplest thing that could work has been genuinely ruled out.
+The default position for anything that promises to be complex by nature should be scepticism and seeking for simplest practical alternative. Agents are powerful, but they are also costly, risky, and have poor feedback loops. It’s not a question of if my task is complex enough to warrant an agent, but whether the simplest possible viable solution has been exhausted.
 
-The mnemonic I use: *No LLM → Augmented → Chain → Route → Parallel → Orchestrate → Evaluate → Agent → Multi-agent.* Go up only when the step below provably fails. Write down what you picked and why you rejected the others.
+The mnemonic that I find helpful here is No LLM -> (Augmented) -> (Chain) -> Route -> (Parallel) -> Orchestrate -> Evaluate -> Agent -> Multi-agent. Each higher step is only attempted if the lower one has provably failed; and the choice should be written down with reasons for all dismissed options.
 
-That last part matters. Decisions made under deadline pressure and excitement about a new pattern rarely get revisited. Writing down "I picked orchestrator-workers over a single agent because the subtasks emerge from the input and I need auditable planning steps" forces the tradeoff to be explicit — and gives you something to check against when the system behaves unexpectedly six months later.
+The second point I want to make is that the decision is best formalised and made visible somewhere. It is not typical to later revisit the justification for choosing a single orchestrator-worker combination over an entire agent due to some emergent properties of the subtask decomposition, and even less common to reverse the decision. By writing the reasoning down you get to keep track of the tradeoffs against the emergent properties of the chosen architecture, which may not be obvious at the time of designing the system, but will become apparent later.
 
-What I'm still unsure about: where exactly the crossover point is between single agent and multi-agent, in terms of task horizon and subtask independence, when compute budgets are held equal. The research is starting to formalize this, but the practitioner guidance isn't there yet.
+The third point is that I want to think through my own uncertainties. Where exactly does the line between single-agent and multi-agent solutions lie in terms of task horizon and degree of subtask autonomy, given roughly equal computational budget? I think that we are beginning to see the theory that informs such choices, but I do not think that the practical guidance is mature enough yet.

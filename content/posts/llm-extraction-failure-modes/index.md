@@ -1,22 +1,22 @@
 ---
-title: "five failure modes in LLM extraction, and the fix for each"
+title: "let's fix 5 failure modes in LLM extraction"
 date: 2026-05-12
-draft: true
+draft: false
 tags: ["prompt-engineering", "structured-output", "llm-evaluation", "ai-engineering"]
 summary: "Every prompt engineering technique exists because a specific failure mode forced it. Here's the failure taxonomy, not the technique list."
 ---
 
-Most prompt engineering posts are structured as a technique list: here's few-shot, here's chain-of-thought, here's structured output. The techniques are real. What's missing is the failure mode that made each one necessary.
+Most prompt engineering posts are structured as a technique list: here's few-shot, here's chain of thought, here's structured output. The techniques are useful, but what gets left out is the failure mode that makes each one necessary.
 
 Here's the same material from the other direction.
 
 ## Failure 1: the model interprets vague instructions differently each run
 
-You write "be conservative" in the system prompt. The model is conservative on Monday and permissive on Wednesday with the same input. You add "use your best judgement." Nothing changes.
+You ask it to be conservative in the system prompt. It is conservative on Monday, liberal on Wednesday with the same input. You add "use your best judgement." Nothing changes
 
-The model doesn't know what your definition of "conservative" is. It infers from context, and context varies. The instruction is a suggestion to guess, not a rule.
+The model isn't aware of what you mean by conservative. It has to make an assumption based on context, which is different every time. Essentially, you're telling it to take a guess.
 
-The fix is operationalized criteria: replace adjectives with categories, replace judgements with rules, replace descriptions with examples.
+The solution is not using vague language. Operationalize your criteria. Instead of saying 'conservative', list out categories of things it should avoid. Instead of judgement calls, provide rules. Describe what you want, don't tell it how to think about what you want.
 
 ```python
 # Vague — model guesses what "important" means
@@ -31,7 +31,7 @@ system = """Extract from this meeting transcript:
 3. Skip the first 5 minutes of casual conversation before the agenda begins."""
 ```
 
-The same principle applies to severity calibration. "Critical means it will crash the system" forces the model to guess what crashing looks like. Showing it a concrete example removes the guess:
+The same goes for severity. "Critical" means "it'll crash the system," the model will guess. Show it what crashing looks like:
 
 ```python
 system = """Classify bugs by severity using these examples:
@@ -45,13 +45,13 @@ MINOR — matches this pattern:
   (naming convention violation, no functional impact)"""
 ```
 
-When false positives appear — the model flagging acceptable code as an issue — the fix is the same: add an explicit example of what is NOT a problem. Don't raise the confidence threshold. Confidence scores are poorly calibrated; the model can be 95% confident about a hallucination. Only the rules fix false positives.
+When there are false positives – instances where the model raises alerts on acceptable code – the solution is to add additional examples of what is not a problem. Do not try to increase the confidence threshold; confidence scores are not calibrated, and the model can be 95% confident about a hallucination. Only explicit negatives help the model learn what is not acceptable.
 
 ## Failure 2: the model produces valid-looking JSON that doesn't parse
 
-Prompt-based JSON extraction fails 5–20% of the time in production. The model drops a bracket, adds a trailing comma, or nests incorrectly. The failure rate is low enough that it passes initial testing and high enough that it breaks pipelines at scale.
+Prompt based JSON parsing fails 5-20% of the time in production. The model simply outputs malformed JSON due to missing brackets or extra commas. Not often enough to matter in unit tests, but frequently enough to cause significant issues downstream
 
-The fix is `tool_use` with a JSON schema. This moves JSON generation from statistical (the model tries to format correctly) to constrained (the API enforces the schema):
+The fix is to use `tool_use` with a JSON schema, which turns the unconstrained "the model tried its best" to the constrained "the API will parse this JSON".
 
 ```python
 extract_invoice_tool = {
@@ -93,19 +93,19 @@ response = client.messages.create(
 )
 ```
 
-Two schema design decisions that matter:
+Two design decisions that are important for this schema are:
 
-**Optional/nullable fields prevent fabrication.** If `payment_terms` is required and the invoice doesn't have payment terms, the model fills it with something plausible. Make it nullable and the model returns `null` honestly. Required fields create pressure to invent.
+**Optional/nullable fields prevent fabrication.** If the model believes the `payment_terms` are required and not present, it must invent some. By making the field nullable, the model is able to return null when there is no value.
 
-**`"unclear"` and `"other"` in enums prevent forced classification.** Without them, the model must pick the closest category even when the document genuinely doesn't fit. An "unclear" option lets it say so. An "other" option paired with a freeform detail field captures edge cases your categories don't cover.
+**`"unclear"` and `"other"` in enums prevent forced classification.** By not including them, you're forcing the model to pick the closest possible category when it may not actually be the right one. Giving it an "unclear" option allows it to state that, while an "other" option along with a freeform field allows catching things that your categories don't explicitly have.
 
-What `tool_use` does not fix: semantic errors. The schema guarantees structure, not correctness. The model can extract the wrong number into the right field, or swap two line items, and the schema will accept it. That requires the next fix.
+What `tool_use` is not addressing: semantic errors. The schema is only a structure check. The model could pluck the wrong number out of a field, or transpose two lines, and the schema would be satisfied. That needs the next fix.
 
 ## Failure 3: the output is structurally valid but semantically wrong
 
-The math doesn't add up. Dates are in the wrong order. A value from page 3 is in a field for page 1 data. The JSON parses. The data is wrong.
+The math doesn't add up. The dates are out of order. The value from page 3 ends up in the page 1 data field. Your JSON parsed fine, but the data is wrong.
 
-These errors aren't fixable with a better prompt. They're fixable by detecting them and sending the model the specific error alongside the original document and its failed extraction:
+These errors are challenging to catch at the prompt stage. They're also simple to resolve if you can detect and return the model the specific error message along with the original document and failed extraction:
 
 ```python
 def validate_extraction(extracted: dict, raw_document: str) -> str | None:
@@ -149,11 +149,11 @@ def extract_with_retry(document: str, max_retries: int = 2) -> dict:
     return result
 ```
 
-The three-part retry structure is load-bearing. "That was wrong, try again" produces the same wrong answer — the model doesn't know what to fix. The specific error message is what gives the model something to act on.
+The three-level retry pattern is a bearer. "That was wrong, try again" the same wrong answer, the model has no idea what to fix. Only the message that describes the error gives the model a hint about what to do.
 
-What retries cannot fix: information that isn't in the document. If the invoice doesn't have a purchase order number, no retry will produce one. When a field is genuinely absent, return null (if the schema allows it) or flag for human review. Distinguishing fixable errors from unfixable ones before retrying saves tokens and avoids retry loops that will always fail.
+What retries are not suitable for is guessing information that is not in the document. If the invoice does not have a purchase order number, no amount of retries will make one appear. For each field, decide beforehand what to do if the information is not present. Return null if possible or send the marked-up result to a human for review. Spend less tokens by not retrying when you already know that nothing will change.
 
-One schema pattern that catches errors before they reach the retry loop — ask the model to report both its calculation and the stated total, then compare:
+A schema that checks for possible errors before they occur is also good practice. One pattern that helps with that is asking the model to report both the calculated values and the values found in the text and comparing them:
 
 ```json
 {
@@ -164,15 +164,15 @@ One schema pattern that catches errors before they reach the retry loop — ask 
 }
 ```
 
-Discrepancy between `line_items_sum` and `stated_total` is a self-reported signal, not an inference. It's more reliable than asking the model whether it's confident.
+Discrepancy between `line_items_sum` and `stated_total` is a self-reported signal, not an inference. It's more reliable than asking the model whether it's confident or not.
 
 ## Failure 4: the model misses things in large reviews
 
-You send a 14-file PR to Claude for review. The first three files get detailed, accurate feedback. By file 9, findings are shallow. By file 12, an obvious injection vulnerability is missed. File 14 gets two lines.
+You send a 14-file PR for review to Claude. It handles the first three accurately. By the 9th file, it gives shallow findings. By the 12th, it overlooks an obvious injection vulnerability. It only managed to give a two-liner on the 14th.
 
-This isn't a model capability problem. It's attention dilution — a structural property of how transformers allocate attention across long contexts. Information in the middle of a long context consistently performs worse than information at the beginning or end, regardless of relevance. A larger context window doesn't fix it: the bottleneck is attention quality, not capacity.
+It has nothing to do with the model's capabilities; it has to do with dilution of attention - the inherent property of the transformer architecture to perform worse on information that is not at the extremes of the input. Performance on information "in the middle" is significantly worse than on information at the beginning or the end of the input, even if the information in the middle was more relevant. Bigger context windows do not alleviate this problem; it is a fundamental limitation of the attention-based architecture.
 
-The fix is architectural: per-file passes in parallel, then a single cross-file integration pass.
+The solution is to process each file in parallel, then do a single cross-file pass, and then a single pass for each file again.
 
 ```python
 async def review_pr(files: list[dict]) -> dict:
@@ -208,9 +208,9 @@ async def review_pr(files: list[dict]) -> dict:
     return {"per_file": per_file_results, "integration": integration_review}
 ```
 
-The parallel per-file calls are also where independent instances help. When the same model reviews its own generated code in the same session, it retains its reasoning context — why it chose each approach, what tradeoffs it considered. It's less likely to challenge decisions it already justified. A separate invocation evaluates the code without that bias.
+The parallel per-file calls are also where independent instances help. On their own models, they can review the code they produce in the same session, retaining the context of the reasoning they did for them and thus being less prone to questioning their decisions. A separate invocation would judge the code they produce without this possible bias
 
-For findings where the model is uncertain, route by calibrated confidence rather than raw confidence scores. Raw self-reported confidence is poorly calibrated — the model can be 95% confident about a hallucination. Calibrate thresholds by running labeled examples through the system and measuring where reported confidence actually correlates with accuracy:
+For findings where the model is unsure, use calibrated confidence thresholds rather than relying on the model’s self-reported confidence. The model’s self-reported confidence is most likely not calibrated, as it has incentive to be overly confident. This can be calibrated by running examples through the model where you know the answer and observing what confidence thresholds correspond to the model producing correct results.
 
 ```json
 {
@@ -226,7 +226,7 @@ For findings where the model is uncertain, route by calibrated confidence rather
 
 A thousand-document evaluation suite run synchronously costs full price and blocks your pipeline for hours. Teams either run evals less frequently than they should or spend more than necessary.
 
-The fix is the Message Batches API: 50% cost reduction with up to 24-hour processing time. The right workloads are latency-tolerant — nightly reports, weekly audits, eval suites that don't need results immediately.
+The fix is the Message Batches API: 50% cost reduction with up to 24h processing time. The right workloads are latency-tolerant: reports, weekly audits, eval suites fit for asynchronous processing.
 
 ```python
 import anthropic
@@ -262,16 +262,18 @@ def retrieve_batch_results(batch_id: str) -> dict:
     return results
 ```
 
-The `custom_id` field is how you match results back to inputs. Batch results don't arrive in submission order.
+The `custom_id` field is what you use to associate results with inputs, but note that you can't rely on results coming back in the same order as you sent them.
 
-Two constraints that determine whether batch is the right choice: no streaming (results arrive as a batch, not incrementally), and no mid-request tool calling (you can't define tools, wait for results, and continue the conversation within a single batch item). If your workflow requires an agentic loop — tool call, observe result, decide next action — use the synchronous API.
+Two hard constraints to consider when choosing between batch vs streaming APIs: absence of streaming (results come back as a whole set, not incrementally), and absence of mid-request tool calling (no possibility to define tools externally, get results, and proceed to the next turn). So for any agentic-style loop of "tool call -> observe -> next step," you'd want to use the synchronous API.
 
-On scheduling: the batch API guarantees results within 24 hours but not faster. If your pipeline has a 30-hour SLA, submit the batch no later than 24 hours before the deadline. That leaves 6 hours of buffer for collection, validation, and operational delays.
+On scheduling: The batch API has a 24-hour SLA but no upper bound, so if you have a 30-hour SLA for processing, you can schedule the batch no later than 24 hours before the deadline. This leaves you with a 6-hour buffer for collection, validation, and other operations.
 
-Stacking with prompt caching: if your extraction prompt has a large, stable system prompt or tool schema, prompt caching on top of batch pricing can bring effective cost down significantly beyond the headline 50%. Cache the invariant parts; pay full price only for the document content that varies per request.
+Coupling with prompt caching:
+
+If you have a large system or tool schema for extraction prompts, prompt caching on top of batch pricing can give you much better value than the advertised 50%+ savings for caching. You want to design your prompts so that the invariant part (large system message/tool schema) is cached, and the varying part (document contents) is charged at the lower per-token rate.
 
 ---
 
-The pattern across all five fixes: each technique is the minimum viable response to a specific failure. Explicit criteria fix vague instructions. Structured schemas fix syntax errors. Retry-with-feedback fixes semantic errors. Multi-pass architecture fixes attention dilution. Batch API fixes eval cost. None of them are improvements to a working system — they're the reason a broken system starts working.
+The common theme in all five fixes seems to be a repair rather than optimization: Each of these techniques was introduced as a minimal viable response to a failure mode rather than an enhancement to an existing model. Explicit criteria fix vague instructions, structured schemas fix syntactic chaos, retry-with-feedback fixes semantic slips, multi-pass architecture fixes inattention, and batch API fixes evaluation budget waste. There is nothing wrong with any of these approaches per se, but none would be necessary in a well-designed system.
 
-What I'm still unsure about: when retry-with-error-feedback genuinely outperforms blind retry with temperature variation. One 2025 arXiv paper found blind retries competitive on pure format errors. My instinct is that feedback wins when the error carries diagnostic signal (wrong field, math mismatch) and blind retry wins when it's pure formatting noise — but I haven't run this comparison cleanly on my own extraction workloads.
+What I'm curious about is how much better retry-with-error-feedback was compared to blind retries with temperature adjustment. There was a paper on arXiv in 2025 that demonstrated blind retries to be competitive on purely syntactic errors like formatting. My hypothesis is that error feedback helps more when the model makes systematic mistakes (wrong field name, incorrect math operation) rather than superficial slips (badly formatted JSON), but I need to benchmark this hypothesis against my own extraction pipelines.

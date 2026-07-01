@@ -1,18 +1,18 @@
 ---
-title: "how to debug tool misrouting in LLM agents"
+title: "how I debug tool misrouting in LLM agents"
 date: 2026-04-10
-draft: true
+draft: false
 tags: ["agents", "tool-design", "mcp", "ai-engineering"]
 summary: "Everyone says 'fix your tool descriptions.' Nobody shows how to diagnose which specific failure caused the misroute."
 ---
 
-The agent called the wrong tool. The usual advice is: improve your descriptions. That's correct but useless without a way to diagnose *which part* of the description failed and why.
+The agent used the wrong tool, and the standard response is to say that the problem was due to vague description and tell the agents to improve their descriptions. This advice may be correct, but it does not give a clear idea of what exactly should be improved because, in this case, the error was in the wrong tool choice.
 
-There are five specific interface failures that cause misrouting. Once you know which one you're looking at, the fix is obvious. Without that diagnosis, you're guessing.
+Five types of interface design failures can lead to this type of mistake, and only after these causes are identified can the correction be developed. Therefore, without proper diagnostics, the problem cannot be solved correctly.
 
 ## The five failure patterns
 
-**1. Missing selection scope.** The description explains what the tool does but not when to use it versus a similar tool. The model has to infer the boundary from context, and it guesses wrong.
+**1. Lack of scope of selection**. The description indicates what the tool does but not when it should be used over the similar one in the list. The model has to guess the scope of selection based on the context but it fails to do so.
 
 ```python
 # Causes misrouting between get_customer and lookup_order
@@ -36,7 +36,7 @@ There are five specific interface failures that cause misrouting. Once you know 
 
 The fix is mutual: each description must reference the other and state when NOT to use it. One-sided clarification doesn't work because the model compares descriptions simultaneously when choosing.
 
-**2. Undescribed output.** The description says what the tool takes but not what it returns. The model can't predict whether the tool will give it what it needs for the next step, so it may route elsewhere or call unnecessarily.
+**2. Undescribed output**. The text describes only the inputs to the tools, not the outputs. As a result, the model can't determine whether a tool will provide the needed information for the next step and, therefore, may select an irrelevant tool or call it anyway.
 
 ```python
 # Model doesn't know what it gets back
@@ -52,7 +52,7 @@ The fix is mutual: each description must reference the other and state when NOT 
 
 Output descriptions are load-bearing for sequential tool calls. If the model doesn't know what step 1 returns, it can't plan step 2.
 
-**3. Unconstrained parameters.** Optional fields with no guidance on when to use them make every call slightly unpredictable. The model fills optional fields by inference, which is inconsistent.
+**3. Unconstrained parameters**. Optional fields with no guidance on when to use them make every call slightly unpredictable. The model fills optional fields by inference, which is inconsistent.
 
 ```python
 # Model guesses when to use `include_history`
@@ -82,7 +82,7 @@ Output descriptions are load-bearing for sequential tool calls. If the model doe
 }
 ```
 
-**4. Cross-tool dependency leakage.** Tool A's description implies it can do something that actually requires calling Tool B first. The model calls A expecting a result that A can't produce alone.
+**4. Cross-tool dependency leakage**. Description of tool A suggests that it can perform a task which actually requires invoking tool B first. In the model A is called expecting it to return a certain result, but it cannot do this on its own.
 
 ```python
 # Implies identity verification is part of the refund call
@@ -99,28 +99,28 @@ Output descriptions are load-bearing for sequential tool calls. If the model doe
 
 **5. System prompt conflicts.** A keyword in the system prompt creates an unintended tool association that overrides a well-written description. This one is invisible until you look for it.
 
-If the system prompt says "always check customer details before processing a request," the word "customer" becomes a routing signal. The model may associate any customer-related query with `get_customer` regardless of what the tool descriptions say. After updating tool descriptions, always audit the system prompt for keywords that could silently override them.
+If the system prompt says something like "always check customer details before processing a request", then the word "customer" becomes a signal for the model to use the get_customer tool. It can happen that you add a new customer-related tool, but the model ignores it and always uses get_customer instead. After updating the tool descriptions, make sure to check the system prompt for any such "override" terms
 
 ## Diagnosing which failure you have
 
-When a misroute happens in production, the debugging sequence is:
+When a misroute has occurred in production, the debugging proceeds in the following order:
 
-1. Pull the full prompt that was sent — system prompt, tool definitions, conversation history.
-2. Look at which two tools were candidates for the routing decision.
-3. Read both descriptions as if you're the model: could you tell which one to call from the description alone, without knowing what the user asked?
-4. If no, you have failure pattern 1 (missing selection scope).
-5. If yes, check whether the model needed the output of the chosen tool for its next planned step. If the output description was missing, you have pattern 2.
+1. Examine the full prompt as it was inputted into the model, including the system prompt, the tool descriptions, and the conversation history.
+2. Identify the two tools that the model had to choose between.
+3. As the model, try to understand which of the two tools to pick based on their description alone, without the context of the user question.
+4. If not possible, you are dealing with failure pattern 1 (selection scope not specified).
+5. Otherwise, proceed to determine whether the model would have needed the output of the selected tool to proceed to the next step. If the tool description did not specify this, you are dealing with pattern 2.
 6. Check the system prompt for keyword overlap with tool names. If found, pattern 5.
-7. If none of the above, look at what optional parameters were passed — pattern 3.
-8. If the model called the right tool but with wrong expectations about prerequisites, pattern 4.
+7. If none of the above, examine the optional parameters that were passed to the tool, if any. You are likely dealing with pattern 3.
+8. Otherwise, if the model used the correct tool but with incorrect assumptions about what it would return, it is probably pattern 4.
 
-This takes ten minutes. It's faster than adding few-shot examples, which treats the symptom. It's much faster than adding a routing classifier, which adds infrastructure around a fixable description problem.
+This process takes about ten minutes. It is faster than adding few-shot examples to the prompt, which only addresses the symptom, not the cause. It is also much faster than building a separate routing classifier, which would add an unnecessary layer of complexity to the system.
 
 ## Error responses are a contract, not a fallback
 
-The second most common failure mode after misrouting: the agent calls the right tool, gets an error, and makes the wrong recovery decision because the error gave it nothing to work with.
+The second most common failure mode once you've routed to the right tool is that the agent recovers incorrectly from an error that happened during tool use, causing it to make the wrong decision. The problem is that the error gave the agent no information to work with.
 
-There are four error categories, and each implies a different recovery path. The category must be in the response — not as prose for a developer to read, but as a structured field the agent reads at runtime.
+There are 4 error categories, and each one implies a different way of recovering from the error. The category needs to be in the response, not as a comment for the developer to read, but as data the agent can read at runtime.
 
 ```python
 def make_error(category: str, message: str, description: str, retryable: bool) -> dict:
@@ -165,9 +165,9 @@ make_error(
 )
 ```
 
-The `isRetryable` field is the key branch point. Transient and validation errors are retryable — the same request can succeed on retry (after a delay, or after fixing the input). Business and permission errors are not — retrying will always produce the same failure. The agent must take a different path.
+The `isRetryable` field is the one, at which the implementation usually branches out. Transient and validation errors are retryable, i.e., the same request is likely to succeed on a retry (after some time elapses, or the input is fixed). By contrast, business and permission errors are not retryable, as the request is doomed to fail on retry. The agent has to choose different branches of execution based on this information.
 
-The failure mode that trips teams most often: an empty result from a successful query vs. an access failure. These look identical without explicit structure.
+The failure mode, which most often leads to confusion, is the empty result of a successful query vs. an inaccessible query. Without some additional conventions, these two cases are not different from each other.
 
 ```python
 # Valid empty result — NOT an error, agent should stop searching
@@ -187,13 +187,13 @@ The failure mode that trips teams most often: an empty result from a successful 
 }
 ```
 
-If the tool returns an empty list on access failure, the agent concludes "no orders found" and moves on. The coordinator gets an incomplete result and doesn't know why. This is silent failure — worse than a visible error because the downstream output looks correct.
+If the tool returns an empty list upon a failed access attempt, the agent assumes there are no orders and proceeds. The coordinator then receives an incomplete set of results with no indication of the issue, resulting in silent downstream failures that are harder to detect than outright errors.
 
 ## Tool scoping: the count matters before the schemas do
 
-Before fixing descriptions, fix the number of tools. A single agent with 18 tools degrades selection reliability regardless of how good the descriptions are — the model spends more attention on tool selection itself and less on the task.
+Before optimizing the descriptions for the tools, adjust their quantity: an agent with 18 tools to choose from has worse selection reliability than one with fewer, even if the descriptions are perfectly accurate, since the model must spend more time thinking about how to choose rather than doing the task.
 
-The reliable range is 4–5 tools per agent, scoped to that agent's specific role. In a multi-agent research system:
+Aim for 4-5 tools per agent, narrowed down to what makes sense for that agent's specialization. For a multi-agent research system, this might look like:
 
 | Agent | Tools |
 |---|---|
@@ -202,9 +202,9 @@ The reliable range is 4–5 tools per agent, scoped to that agent's specific rol
 | Synthesis | `compile_report`, `verify_fact`, `format_citation`, `assess_coverage` |
 | Coordinator | `Agent` (spawn subagents), `review_output`, `request_revision` |
 
-Each agent gets exactly what it needs for its defined role. The coordinator never sees `search_web`. The web search agent never sees `compile_report`. This isn't just good architecture — it's what makes per-agent description optimization tractable. You can't write precise selection-scope boundaries when the same tool appears in six agents with different contexts.
+Each agent is provided with exactly the capabilities that it needs to fulfill its designated role. The coordinator agent has no access to the `search_web` tool. The web search agent has no access to the `compile_report` tool. This is good design, but more importantly, this is a prerequisite for per-agent description optimization. You cannot define selection-scope boundaries cleanly if the same tool is used in six different ways by six different agents.
 
-When a subagent occasionally needs a capability that belongs to another role, the answer is a scoped cross-role tool — a constrained version given directly to the agent that needs it, rather than routing through the coordinator for every call.
+When a subagent sometimes needs a capability controlled by another role, we can grant the capability in a limited way to the subagent, using a scoped cross-role tool (see fig. 2). A scoped cross-role tool is a cross-role tool that grants capability only to one particular subagent, and only in certain contexts (such as when invoked by the subagent), instead of being generally available to whoever chooses to invoke it.
 
 ```python
 # Generic tool — enables misuse, unclear purpose
@@ -224,9 +224,9 @@ When a subagent occasionally needs a capability that belongs to another role, th
 
 ## MCP configuration: scope at the server boundary first
 
-MCP tool scoping operates at two levels. Most engineers scope at the tool level (which tools to give each agent). The more leveraged decision is at the server level: which MCP servers activate for a given context.
+MCP tool scoping takes place at two levels. Most teams configure tools at the tool level: that is, which tools to grant access to which agents. Less obvious but much more impactful is the configuration at the server level: which MCP servers are enabled for a given context.
 
-Project-level configuration belongs in `.mcp.json` at the repo root — version-controlled, shared with the team:
+Project level configuration goes in the `.mcp.json` file at a repo's root, under version control and shared by all developers, and looks approximately like this:
 
 ```json
 {
@@ -248,22 +248,23 @@ Project-level configuration belongs in `.mcp.json` at the repo root — version-
 }
 ```
 
-The `${VARIABLE_NAME}` syntax keeps credentials out of version control. Each developer sets their own tokens locally. The config file commits safely; the secrets never enter repo history.
+The `${VARIABLE_NAME}` syntax allows to keep credentials in environment outside of version control. Every developer maintains their own tokens locally, while the config file committed to repository remains clean from any secrets.
 
-Personal or experimental servers go in `~/.claude.json` — not version-controlled, not shared. Use it for servers you're testing before proposing to the team, or integrations that are specific to your local setup.
 
-When an MCP tool has a sparse description, the agent will prefer built-in tools even when the MCP tool is more capable. The fix is the same as for custom tools: add selection scope, output description, and explicit boundaries. The source of the tool — built-in or MCP — doesn't change what the description needs to contain.
+You could store personal or experimental servers in the `${HOME}` directory at `~/.claude.json` , as this file is neither committed to repository, nor shared between collaborators. This is useful for servers that you are planning to propose for others' adoption later, but currently test on local or have some personal preferences.
+
+When you have an MCP tool with sparse description, the agent will favor built-in tools over MCP ones, since they are more reliable. However, the solution is the same as with custom tools: provide selection scope, output description and explicit boundaries. The fact that a tool is built-in or external doesn't impact its description and capabilities.
 
 ## The ordering that saves the most time
 
-When debugging a failing agent, check in this order:
+I was going to put few shot examples on this list too, but examples are a liability in the first place. They burn tokens, and don't diagnose the real issue. The routing classifier comes lower down on my list because it's an infra cost for an edge case that ought to be described in ten minutes.
 
-1. **Tool count** — more than 5 tools per agent? Scope first.
-2. **Description quality** — missing selection scope, output description, or parameter constraints?
-3. **System prompt conflicts** — keyword overlap with tool names?
-4. **Error structure** — are errors returning `isError` and `errorCategory`, or just text?
-5. **Cross-tool dependencies** — are prerequisites documented in the downstream tool's description?
+The only thing I'm not so sure about is the cutoff. Why four or five? The numbers sound right to me as a practitioner, but there's no particular reason to believe they're ideal for any particular model class. I'd love to see this explored on modern language models.
 
-Few-shot examples don't belong on this list as a first step. They add token overhead without addressing why the model is confused. A routing classifier belongs even further down — it's infrastructure overhead for what is usually a description problem solvable in ten minutes.
+When debugging a misbehaving agent you should first check
 
-What I'm still unsure about: at what tool count the degradation becomes sharp enough to matter in practice. The 4–5 figure comes from practitioner experience, not a published benchmark on a specific model family. I'd want to see this tested on current models before treating it as a hard constraint rather than a useful heuristic.
+1. the number of tools per agent (scope creep if it's over 5),
+2. absence of selection scope, output description, or parameter constraints,
+3. collisions between the system prompt and tool names,
+4. improper error returns,
+5. the presence of prerequisites in a downstream tool's description.
