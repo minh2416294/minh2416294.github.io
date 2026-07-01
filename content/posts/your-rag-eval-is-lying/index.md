@@ -1,5 +1,5 @@
 ---
-title: "Pitfalls in RAG Evaluation: What Your Benchmarks Aren't Telling You"
+title: "Pitfalls in RAG Evaluation"
 date: 2026-04-01
 draft: false
 tags: ["rag", "retrieval", "llm-evaluation", "ai-engineering"]

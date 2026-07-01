@@ -1,5 +1,5 @@
 ---
-title: "let's fix 5 failure modes in LLM extraction"
+title: "Fixing 5 failure modes in LLM extraction"
 date: 2026-05-12
 draft: false
 tags: ["prompt-engineering", "structured-output", "llm-evaluation", "ai-engineering"]

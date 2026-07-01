@@ -1,5 +1,5 @@
 ---
-title: "Protecting what enter your model's context window"
+title: "Protecting the model's context window"
 date: 2026-04-05
 draft: false
 tags: ["agents", "llm-architecture", "ai-engineering", "system-design"]
