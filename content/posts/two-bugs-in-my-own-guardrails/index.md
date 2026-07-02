@@ -78,4 +78,4 @@ What made the second bug easier to spot than the first was a test. The branch-gu
 
 The thing I'm worrying about is that now I have six phases in my permission pipeline plus eight hooks and six path-scoped rule files, and I can barely keep track of the evaluation order anymore. The next step isn't necessarily more clever rules - it may just be to make that 25-case self-test a thing I commit along with the config, the way I would never write an application without also writing tests for it.
 
-Thank you so much for reading this. If you interested, please reach out to me at my [X/Twitter](https://x.com/tbmkunn_) or [Reddit](https://www.reddit.com/user/Maleficent_Train1207/)
+Thank you so much for reading this. If you interested, please reach out to me at my [X/Twitter](https://x.com/tbmkunn_) or [Reddit](https://www.reddit.com/user/tbmkunn_/)

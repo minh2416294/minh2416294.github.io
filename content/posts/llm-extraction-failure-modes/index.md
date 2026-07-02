@@ -278,4 +278,4 @@ The common theme in all five fixes seems to be a repair rather than optimization
 
 What I'm curious about is how much better retry-with-error-feedback was compared to blind retries with temperature adjustment. There was a paper on arXiv in 2025 that demonstrated blind retries to be competitive on purely syntactic errors like formatting. My hypothesis is that error feedback helps more when the model makes systematic mistakes (wrong field name, incorrect math operation) rather than superficial slips (badly formatted JSON), but I need to benchmark this hypothesis against my own extraction pipelines.
 
-Thank you so much for reading this. If you interested, please reach out to me at my [X/Twitter](https://x.com/tbmkunn_) or [Reddit](https://www.reddit.com/user/Maleficent_Train1207/)
+Thank you so much for reading this. If you interested, please reach out to me at my [X/Twitter](https://x.com/tbmkunn_) or [Reddit](https://www.reddit.com/user/tbmkunn_/)

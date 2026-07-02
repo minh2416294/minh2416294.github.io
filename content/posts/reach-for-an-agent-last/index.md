@@ -91,4 +91,4 @@ The second point I want to make is that the decision is best formalised and made
 
 The third point is that I want to think through my own uncertainties. Where exactly does the line between single-agent and multi-agent solutions lie in terms of task horizon and degree of subtask autonomy, given roughly equal computational budget? I think that we are beginning to see the theory that informs such choices, but I do not think that the practical guidance is mature enough yet.
 
-Thank you so much for reading this. If you interested, please reach out to me at my [X/Twitter](https://x.com/tbmkunn_) or [Reddit](https://www.reddit.com/user/Maleficent_Train1207/)
+Thank you so much for reading this. If you interested, please reach out to me at my [X/Twitter](https://x.com/tbmkunn_) or [Reddit](https://www.reddit.com/user/tbmkunn_/)

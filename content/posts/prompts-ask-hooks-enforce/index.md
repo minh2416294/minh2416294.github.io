@@ -82,4 +82,4 @@ That's why all my hooks loudly declare themselves. Blocks emit a systemMessage (
 
 What I'm not sure about is calibration - the art of writing rules that are mostly deterministic but occasionally allow exceptions. "Don't add a new dependency without asking" is too important to leave as markdown, but a hard-coded hook would wrongly penalize those times I actually do want to add a new dependency. The answer is probably a third category of instruction, one that asks rather than blocks, but I'm not certain what guardrails should promptfully ask the user for forgiveness.
 
-Thank you so much for reading this. If you interested, please reach out to me at my [X/Twitter](https://x.com/tbmkunn_) or [Reddit](https://www.reddit.com/user/Maleficent_Train1207/)
+Thank you so much for reading this. If you interested, please reach out to me at my [X/Twitter](https://x.com/tbmkunn_) or [Reddit](https://www.reddit.com/user/tbmkunn_/)
