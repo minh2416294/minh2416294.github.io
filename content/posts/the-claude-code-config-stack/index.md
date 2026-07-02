@@ -158,3 +158,5 @@ The stack decays in expected ways.
 **CI review output becomes noise**. Nobody looks at the results because the same problems are always there, or because there are too many false positives to pay attention to real issues. The way to address this is to include previous results in the prompt when launching CI review job, structure the output to prioritize findings by severity level, and establish a policy that dictates what merge is allowed based on review results. Having no policy about CI review results basically allows anyone to merge anything.
 
 **The configuration stack belongs in code review.** Changes to `.claude/CLAUDE.md`, `.claude/rules/`, `.claude/skills/`, and CI workflow YAML should go through the same PR process as application code. If configuration changes aren't reviewed, they're not maintained (they're just accumulated).
+
+Thank you so much for reading this. If you interested, please reach out to me at my [X/Twitter](https://x.com/tbmkunn_) or [Reddit](https://www.reddit.com/user/Maleficent_Train1207/)

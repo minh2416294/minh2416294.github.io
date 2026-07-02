@@ -48,4 +48,4 @@ contributions:
     date: 2026-06-20
 ---
 
-Open-source work I've shipped - bug fixes and small improvements to AI coding agents tools.
+Open-source work I've shipped - bug fixes and small improvements to AI coding agents tools. Connect with me on [X/Twitter](https://x.com/tbmkunn_) or [Reddit](https://www.reddit.com/user/Maleficent_Train1207)
