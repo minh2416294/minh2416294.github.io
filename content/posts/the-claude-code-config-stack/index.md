@@ -1,5 +1,5 @@
 ---
-title: "Exploring Claude Code configuration stack"
+title: "Exploring Claude Code Configuration Stack"
 date: 2026-04-20
 draft: false
 tags: ["claude-code", "developer-tooling", "ai-engineering", "ci-cd"]

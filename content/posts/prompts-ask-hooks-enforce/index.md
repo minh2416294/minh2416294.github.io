@@ -1,5 +1,5 @@
 ---
-title: "Using hook as a deterministic guardrail"
+title: "Using Hooks as Deterministic Guardrail"
 date: 2026-06-21
 draft: false
 tags: ["claude-code", "hooks", "ai-tooling", "agent-design"]
