@@ -1,5 +1,5 @@
 ---
-title: "Picking the right LLM architecture"
+title: "Picking the Right LLM Architecture"
 date: 2026-03-21
 draft: false
 tags: ["llm-architecture", "agents", "system-design", "ai-engineering"]

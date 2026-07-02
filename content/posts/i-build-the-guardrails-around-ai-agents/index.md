@@ -1,5 +1,5 @@
 ---
-title: "About Me: My Core Values & Vision"
+title: "Code, Context, and Me"
 date: 2026-06-30
 weight: 1
 draft: false
