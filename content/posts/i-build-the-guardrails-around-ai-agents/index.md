@@ -7,7 +7,7 @@ tags: ["about", "agent-design", "claude-code", "ai-tooling"]
 summary: "A self-intro. I work on the controls around AI agents - what they can do, what stays human, and how the system fails when something slips. Here's how I think, shown through the work, including its limits."
 ---
 
-Hi, I am Minh, and I am currently working on the safety layer for AI agents - that is, the mechanisms that determine when the model can act independently, when a human has to intervene, and what the system should do after something goes wrong. I study at Hanoi University of Science and Technology, but I dropped out of the computer science program after two years.
+Hi, I am Minh, and I am currently working on the safety layer for AI agents - that is, the mechanisms that determine when the model can act independently, when a human has to intervene, and what the system should do after something goes wrong. I studied CS at Hanoi University of Science and Technology.
 
 In my experience, AI-agent demos tend to have one shot, a “flaky” success, and then quietly fail on the second run. One fails a test on a flaky feature, another fails to implement a safety measure that was written as a statement and assumed to be a guard. And most importantly, that the failure is hidden until it comes back to haunt you, and no one can tell you what assumptions were critical. The space between what a system believes and what the documentation says is where I operate.
 
