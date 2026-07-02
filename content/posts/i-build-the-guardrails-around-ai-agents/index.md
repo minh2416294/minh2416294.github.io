@@ -67,3 +67,5 @@ This is the part where I begin working on something else. It is the boundary con
 I work on the bits of agents that no one demos: the control, the boundaries, the failure modes; I am most interested in a system that fails loudly. I am in the earlier part of the stack, building in public, where I rather expose my own guardrails' bugs than claim publicly that they are not there.
 
 If you build agentic systems and have ever felt the particular existential dread when a safeguard you thought was there is revealed to be absent, I would appreciate your help, and I would like to hear what you think about my work. You can read my code and contributions here: [my contributions](https://minh2416294.github.io/contributions/) or see my learning notes here: [my learning posts](https://minh2416294.github.io/posts/). I prefer you judge for yourself.
+
+Thank you so much for reading this. If you interested, please reach out to me at my [X/Twitter](https://x.com/tbmkunn_) or [Reddit](https://www.reddit.com/user/Maleficent_Train1207/)

@@ -179,3 +179,5 @@ Before shipping a long-running agent, these are the events worth logging - not f
 None of this is particularly exotic. It all comes down to making the decision to instrument before you ship, which none of us do.
 
 What I'm still uncertain about is whether fidelity loss during compaction is topic-independent or are there certain classes information which are more susceptible to loss than others (implicit constraints, ruled out approaches, specific line numbers). If the latter is true, perhaps we can come up with a scratchpad template which captures exactly the topics not captured by the compaction. It's unknown to me, but the closest thing I could find is in the git context controller paper, where they state that with git, you can track your branching context and merge agent state, which suggests that they have a reason to believe that naive merges are not compositional.
+
+Thank you so much for reading this. If you interested, please reach out to me at my [X/Twitter](https://x.com/tbmkunn_) or [Reddit](https://www.reddit.com/user/Maleficent_Train1207/)
