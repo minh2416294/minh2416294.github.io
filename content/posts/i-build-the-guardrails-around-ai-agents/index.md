@@ -68,4 +68,4 @@ I work on the bits of agents that no one demos: the control, the boundaries, the
 
 If you build agentic systems and have ever felt the particular existential dread when a safeguard you thought was there is revealed to be absent, I would appreciate your help, and I would like to hear what you think about my work. You can read my code and contributions here: [my contributions](https://minh2416294.github.io/contributions/) or see my learning notes here: [my learning posts](https://minh2416294.github.io/posts/). I prefer you judge for yourself.
 
-Thank you so much for reading this. If you interested, please reach out to me at my [X/Twitter](https://x.com/tbmkunn_) or [Reddit](https://www.reddit.com/user/Maleficent_Train1207/)
+Thank you so much for reading this. If you interested, please reach out to me at my [X/Twitter](https://x.com/tbmkunn_) or [Reddit](https://www.reddit.com/user/tbmkunn_/)

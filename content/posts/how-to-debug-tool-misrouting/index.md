@@ -269,4 +269,4 @@ When debugging a misbehaving agent you should first check
 4. improper error returns,
 5. the presence of prerequisites in a downstream tool's description.
 
-Thank you so much for reading this. If you interested, please reach out to me at my [X/Twitter](https://x.com/tbmkunn_) or [Reddit](https://www.reddit.com/user/Maleficent_Train1207/)
+Thank you so much for reading this. If you interested, please reach out to me at my [X/Twitter](https://x.com/tbmkunn_) or [Reddit](https://www.reddit.com/user/tbmkunn_/)

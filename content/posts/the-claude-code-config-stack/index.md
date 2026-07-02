@@ -159,4 +159,4 @@ The stack decays in expected ways.
 
 **The configuration stack belongs in code review.** Changes to `.claude/CLAUDE.md`, `.claude/rules/`, `.claude/skills/`, and CI workflow YAML should go through the same PR process as application code. If configuration changes aren't reviewed, they're not maintained (they're just accumulated).
 
-Thank you so much for reading this. If you interested, please reach out to me at my [X/Twitter](https://x.com/tbmkunn_) or [Reddit](https://www.reddit.com/user/Maleficent_Train1207/)
+Thank you so much for reading this. If you interested, please reach out to me at my [X/Twitter](https://x.com/tbmkunn_) or [Reddit](https://www.reddit.com/user/tbmkunn_/)

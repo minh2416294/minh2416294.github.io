@@ -173,4 +173,4 @@ These are all techniques for improving context quality. The actual work is the e
 
 The thing I'm least sure about is whether observation masking - showing the model some results but not others while still recording them for the log - is the right primitive or if it creates a whole new set of errors where the model is making decisions based on information that isn't actually there. The technique definitely improves solve rates and reduces costs on these benchmarks, but I'm not sure anyone has characterized the failure modes it can introduce.
 
-Thank you so much for reading this. If you interested, please reach out to me at my [X/Twitter](https://x.com/tbmkunn_) or [Reddit](https://www.reddit.com/user/Maleficent_Train1207/)
+Thank you so much for reading this. If you interested, please reach out to me at my [X/Twitter](https://x.com/tbmkunn_) or [Reddit](https://www.reddit.com/user/tbmkunn_/)

@@ -194,4 +194,4 @@ And really think through chunking as an engineering decision, not a default. The
 
 The thing I'm still not sure of is whether contextual retrieval's LLM-generated context is adding noise to the signal, if the chunk was self-contained. Say, if the chunk has a single factual answer, the prepend context makes its precision artificially low, but you can't know that at indexing time.
 
-Thank you so much for reading this. If you interested, please reach out to me at my [X/Twitter](https://x.com/tbmkunn_) or [Reddit](https://www.reddit.com/user/Maleficent_Train1207/)
+Thank you so much for reading this. If you interested, please reach out to me at my [X/Twitter](https://x.com/tbmkunn_) or [Reddit](https://www.reddit.com/user/tbmkunn_/)
