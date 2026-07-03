@@ -3,6 +3,22 @@ title: "Open-source contributions"
 description: "My contributions to Agentic AI Coding Repositories"
 contributions:
   - repo: "mastra-ai/mastra"
+    summary: "Pin the correct external dependency version when a package omits ./package.json from its exports"
+    url: "https://github.com/mastra-ai/mastra/pull/18917"
+    date: 2026-07-04
+  - repo: "cline/cline"
+    summary: "Keep tool-result message IDs stable across persist cycles"
+    url: "https://github.com/cline/cline/pull/12050"
+    date: 2026-07-04
+  - repo: "continuedev/continue"
+    summary: "Stop autocomplete from firing in non-code input boxes"
+    url: "https://github.com/continuedev/continue/pull/12942"
+    date: 2026-07-04
+  - repo: "OpenHands/OpenHands"
+    summary: "Deduplicate repositories by full_name in ProviderHandler"
+    url: "https://github.com/OpenHands/OpenHands/pull/15113"
+    date: 2026-07-04
+  - repo: "mastra-ai/mastra"
     summary: "Cover state typing in dowhile/dountil loop conditions"
     url: "https://github.com/mastra-ai/mastra/pull/18689"
     date: 2026-06-30
