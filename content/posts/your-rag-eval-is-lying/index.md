@@ -1,5 +1,6 @@
 ---
 title: "Pitfalls in RAG Evaluation"
+images: ["share.png"]
 date: 2026-04-01
 draft: false
 tags: ["rag", "retrieval", "llm-evaluation", "ai-engineering"]

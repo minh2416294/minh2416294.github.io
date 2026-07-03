@@ -1,5 +1,6 @@
 ---
 title: "Debugging My Agent Guardrails"
+images: ["share.png"]
 date: 2026-06-10
 draft: false
 tags: ["claude-code", "hooks", "ai-tooling", "developer-tooling"]

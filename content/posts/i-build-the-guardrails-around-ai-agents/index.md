@@ -1,5 +1,6 @@
 ---
 title: "Code, Context, and Me"
+images: ["share.png"]
 date: 2026-06-30
 weight: 1
 draft: false

@@ -1,5 +1,6 @@
 ---
 title: "Exploring Claude Code Configuration Stack"
+images: ["share.png"]
 date: 2026-04-20
 draft: false
 tags: ["claude-code", "developer-tooling", "ai-engineering", "ci-cd"]

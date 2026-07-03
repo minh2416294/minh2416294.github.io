@@ -1,5 +1,6 @@
 ---
 title: "Protecting The Model's Context Window"
+images: ["share.png"]
 date: 2026-04-05
 draft: false
 tags: ["agents", "llm-architecture", "ai-engineering", "system-design"]
