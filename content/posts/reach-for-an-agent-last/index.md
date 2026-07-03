@@ -1,5 +1,6 @@
 ---
 title: "Picking the Right LLM Architecture"
+images: ["share.png"]
 date: 2026-03-21
 draft: false
 tags: ["llm-architecture", "agents", "system-design", "ai-engineering"]

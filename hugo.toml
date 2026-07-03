@@ -16,6 +16,9 @@ pygmentsUseClasses = true
   disableXML = true
   minifyOutput = true
 
+[services.googleAnalytics]
+  ID = "G-PME46CB39E"
+
 [markup]
   [markup.highlight]
     noClasses = false
@@ -46,6 +49,12 @@ pygmentsUseClasses = true
   ShowWordCount = false
   ShowToc = false
   comments = false
+
+  [params.assets]
+    favicon = "favicon.svg"
+    favicon16x16 = "favicon.svg"
+    favicon32x32 = "favicon.svg"
+    apple_touch_icon = "favicon.svg"
 
   [params.profileMode]
     enabled = false

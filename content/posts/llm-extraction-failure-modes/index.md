@@ -1,5 +1,6 @@
 ---
 title: "Fixing Common Failure Modes in LLM Extraction"
+images: ["share.png"]
 date: 2026-05-12
 draft: false
 tags: ["prompt-engineering", "structured-output", "llm-evaluation", "ai-engineering"]

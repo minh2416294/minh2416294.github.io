@@ -1,5 +1,6 @@
 ---
 title: "Auditing Agent Self-Truth"
+images: ["share.png"]
 date: 2026-06-07
 draft: false
 tags: ["agents", "observability", "ai-engineering", "reliability"]
