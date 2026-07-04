@@ -2,6 +2,10 @@
 title: "Open-source contributions"
 description: "My contributions to Agentic AI Coding Repositories"
 contributions:
+  - repo: "cline/cline"
+    summary: "Include untracked files when generating a Git commit message"
+    url: "https://github.com/cline/cline/pull/12069"
+    date: 2026-07-04
   - repo: "mastra-ai/mastra"
     summary: "Pin the correct external dependency version when a package omits ./package.json from its exports"
     url: "https://github.com/mastra-ai/mastra/pull/18917"
