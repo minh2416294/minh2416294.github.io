@@ -2,6 +2,26 @@
 title: "Open-source contributions"
 description: "My contributions to Agentic AI Coding Repositories"
 contributions:
+  - repo: "anomalyco/opencode"
+    summary: "Stop archiving a session from reopening a recent one"
+    url: "https://github.com/anomalyco/opencode/pull/35416"
+    date: 2026-07-05
+  - repo: "cline/cline"
+    summary: "Show per-file diff for multi-file apply_patch edits"
+    url: "https://github.com/cline/cline/pull/12086"
+    date: 2026-07-05
+  - repo: "OpenHands/OpenHands"
+    summary: "List ~/.openhands/skills (V1) user skills in /skills/search"
+    url: "https://github.com/OpenHands/OpenHands/pull/15123"
+    date: 2026-07-05
+  - repo: "continuedev/continue"
+    summary: "Update stale models docs link in generated config"
+    url: "https://github.com/continuedev/continue/pull/12943"
+    date: 2026-07-05
+  - repo: "mastra-ai/mastra"
+    summary: "Forward listTracesLight through the lazy observability facade in DuckDB"
+    url: "https://github.com/mastra-ai/mastra/pull/18955"
+    date: 2026-07-05
   - repo: "cline/cline"
     summary: "Include untracked files when generating a Git commit message"
     url: "https://github.com/cline/cline/pull/12069"
