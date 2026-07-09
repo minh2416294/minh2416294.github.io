@@ -2,6 +2,14 @@
 title: "Open-source contributions"
 description: "My contributions to Agentic AI Coding Repositories"
 contributions:
+  - repo: "cline/cline"
+    summary: "stopped Cline's CLI from spamming a duplicate-key React warning while browsing `/skills`, by giving each repeatable `read_files` row an index-namespaced key, covered by a regression test"
+    url: "https://github.com/cline/cline/pull/12144"
+    date: 2026-07-08
+  - repo: "mastra-ai/mastra"
+    summary: "kept long agent threads readable by stopping observational-memory status snapshots from persisting as real messages, marking the `data-om-status` part transient so it never crowds out real turns"
+    url: "https://github.com/mastra-ai/mastra/pull/19084"
+    date: 2026-07-08
   - repo: "anomalyco/opencode"
     summary: "archiving a session now closes its tab cleanly instead of reopening a closed one, restoring desktop session cleanup by selecting the next session only from root, non-archived candidates"
     url: "https://github.com/anomalyco/opencode/pull/35416"
