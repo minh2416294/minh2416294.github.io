@@ -1,0 +1,35 @@
+{{- define "main" -}}
+<header class="page-header">
+  <h1>{{ .Title }}</h1>
+  {{- with .Description }}
+  <div class="post-description">{{ . | markdownify }}</div>
+  {{- end }}
+</header>
+
+{{- if .Content }}
+<div class="post-content md-content">{{ .Content }}</div>
+{{- end }}
+
+{{- $pages := .RegularPages.ByDate.Reverse }}
+{{- if $pages }}
+{{- range $pages }}
+<article class="post-entry">
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">
+      {{- if .Draft }}<span class="entry-hint" title="Draft">Draft</span> {{ end -}}
+      {{ .Title }}
+    </h2>
+    {{- with .Summary }}
+    <p class="entry-summary">{{ . | plainify | htmlUnescape }}</p>
+    {{- end }}
+  </header>
+  <footer class="entry-footer">
+    {{- if not .Date.IsZero }}{{ .Date | time.Format (default "Jan 2, 2006" site.Params.DateFormat) }}{{ end -}}
+  </footer>
+  <a class="entry-link" aria-label="build log post: {{ .Title | plainify }}" href="{{ .Permalink }}"></a>
+</article>
+{{- end }}
+{{- else }}
+<p>Build log posts coming soon.</p>
+{{- end }}
+{{- end -}}
