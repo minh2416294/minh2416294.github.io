@@ -16,19 +16,19 @@
 {{- $sorted := append $rest $pinned }}
 <section class="projects-grid">
   {{- range $sorted }}
+  {{- $name := .name }}
   <article class="project-card">
-    <h2>
-      {{- $name := .name -}}
-      {{- with .url }}<a href="{{ . }}" target="_blank" rel="noopener noreferrer">{{ $name }}</a>
-      {{- else }}{{ $name }}{{ end -}}
-    </h2>
+    <h2>{{ $name }}</h2>
     <p>{{ .blurb }}</p>
     {{- with .links }}
     <ul class="project-links">
       {{- range . }}
-      <li><a href="{{ .url }}" target="_blank" rel="noopener noreferrer">{{ .label }}</a></li>
+      <li><a href="{{ .url }}" target="_blank" rel="noopener noreferrer">Read the <span class="underline">{{ .label }}</span></a></li>
       {{- end }}
     </ul>
+    {{- end }}
+    {{- with .url }}
+    <a class="entry-link" aria-label="GitHub repository for {{ $name }}" href="{{ . }}" target="_blank" rel="noopener noreferrer"></a>
     {{- end }}
   </article>
   {{- end }}

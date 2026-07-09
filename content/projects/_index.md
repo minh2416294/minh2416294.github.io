@@ -10,4 +10,4 @@ projects:
       - { label: "Build Log", url: "/projects/clinescope/" }
 ---
 
-Things I've built — mostly small, sharp tools around AI agents and developer workflows. Each one started from a real problem I hit, not a feature I wanted to show off.
+Small, sharp tools for AI agents and developer workflows that I'm building in public. Each one started from a real problem I hit, and I log the bugs, decisions, and tradeoffs as I go, not just the finished result.

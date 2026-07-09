@@ -433,10 +433,16 @@ body.list .post-content.md-content {
 }
 
 .project-card {
+  position: relative;
   border: 1px solid var(--border);
   border-radius: 14px;
   padding: 1.5rem;
   background: var(--entry);
+}
+
+/* a single project spans the full grid width instead of one column */
+.projects-grid .project-card:only-child {
+  grid-column: 1 / -1;
 }
 
 .project-card h2 {
@@ -445,6 +451,13 @@ body.list .post-content.md-content {
 }
 
 .project-card p { font-family: var(--serif); }
+
+/* click-anywhere overlay to the repo; inner links sit above it */
+.project-card .entry-link {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
 
 .project-links {
   list-style: none;
@@ -456,9 +469,16 @@ body.list .post-content.md-content {
 }
 
 .project-links a {
+  position: relative;
+  z-index: 1;
   font-family: var(--sans);
   font-size: 0.9rem;
   font-weight: 500;
+}
+
+.project-links a .underline {
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .contributions h2 {
