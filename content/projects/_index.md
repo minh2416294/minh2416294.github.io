@@ -3,12 +3,11 @@ title: "Projects"
 draft: false
 description: "Things I've built."
 projects:
-  - name: "Example Project"
-    pinned: true
-    blurb: "One-sentence description of what this project does and why it matters."
+  - name: "Clinescope"
+    url: "https://github.com/minh2416294/clinescope"
+    blurb: "Grades how well an AI coding agent actually did its job, by replaying a real run and scoring the moves it made. Most eval tools only check an AI's written answers, not whether it can build software."
     links:
-      - { label: "GitHub", url: "https://github.com/<USER>/example" }
-      - { label: "Demo", url: "https://example.com" }
+      - { label: "Build Log", url: "/projects/clinescope/" }
 ---
 
-Things I've built — mostly small, sharp tools around AI agents and developer workflows. Each one started from a real problem I hit, not a feature I wanted to show off.
+Small, sharp tools for AI agents and developer workflows that I'm building in public. Each one started from a real problem I hit, and I log the bugs, decisions, and tradeoffs as I go, not just the finished result.
