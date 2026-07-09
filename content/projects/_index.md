@@ -5,7 +5,7 @@ description: "Things I've built."
 projects:
   - name: "Clinescope"
     url: "https://github.com/minh2416294/clinescope"
-    blurb: "The trajectory-and-diff reliability layer that prompt-output eval tools skip: scores which tools a coding agent picks across a real Cline trace today, and its diff quality next."
+    blurb: "Grades how well an AI coding agent actually did its job, by replaying a real run and scoring the moves it made. Most eval tools only check an AI's written answers, not whether it can build software."
     links:
       - { label: "Build Log", url: "/projects/clinescope/" }
 ---
