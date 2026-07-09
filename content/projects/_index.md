@@ -1,6 +1,6 @@
 ---
 title: "Projects"
-draft: true
+draft: false
 description: "Things I've built."
 projects:
   - name: "Example Project"
