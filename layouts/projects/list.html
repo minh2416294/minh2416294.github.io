@@ -16,10 +16,11 @@
 {{- $sorted := append $rest $pinned }}
 <section class="projects-grid">
   {{- range $sorted }}
-  <article class="project-card{{ if .pinned }} pinned{{ end }}">
+  <article class="project-card">
     <h2>
-      {{- if .pinned }}<span class="pin-badge" title="Pinned">Pinned</span> {{ end -}}
-      {{ .name }}
+      {{- $name := .name -}}
+      {{- with .url }}<a href="{{ . }}" target="_blank" rel="noopener noreferrer">{{ $name }}</a>
+      {{- else }}{{ $name }}{{ end -}}
     </h2>
     <p>{{ .blurb }}</p>
     {{- with .links }}
