@@ -10,4 +10,4 @@ projects:
       - { label: "Build Log", url: "/projects/clinescope/" }
 ---
 
-Small, sharp tools for AI agents and developer workflows that I'm building in public. Each one started from a real problem I hit, and I log the bugs, decisions, and tradeoffs as I go, not just the finished result. I'm open to remote contract work. Email: [minh2416294@gmail.com](minh2416294@gmail.com).
+Small, sharp tools for AI agents and developer workflows that I'm building in public. Each one started from a real problem I hit, and I log the bugs, decisions, and tradeoffs as I go, not just the finished result. I'm open to remote contract work. Email: [minh2416294@gmail.com](mailto:minh2416294@gmail.com).
