@@ -96,4 +96,4 @@ contributions:
     date: 2026-06-20
 ---
 
-Open-source work I've shipped - bug fixes and small improvements to AI coding agents tools. I'm open to remote contract work. Email: [minh2416294@gmail.com](minh2416294@gmail.com).
+Open-source work I've shipped - bug fixes and small improvements to AI coding agents tools. I'm open to remote contract work. Email: [minh2416294@gmail.com](mailto:minh2416294@gmail.com).
