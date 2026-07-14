@@ -1,6 +1,7 @@
 ---
 title: "Hardening the Harness"
 date: 2026-07-14
+weight: 1
 draft: false
 tags: ["claude-code", "hooks", "agent-reliability", "harness-engineering"]
 summary: "My sixteens Claude Code failure modes, fixed one at a time. Two principles: a guard that fails open is worse than none, and the bug is never in any docs."
