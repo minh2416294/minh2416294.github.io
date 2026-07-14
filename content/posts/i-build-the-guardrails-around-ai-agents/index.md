@@ -2,7 +2,6 @@
 title: "Code, Context, and Me"
 images: ["share.png"]
 date: 2026-06-30
-weight: 1
 draft: false
 tags: ["about", "agent-design", "claude-code", "ai-tooling"]
 summary: "A self-intro. I work on the controls around AI agents - what they can do, what stays human, and how the system fails when something slips. Here's how I think, shown through the work, including its limits."
