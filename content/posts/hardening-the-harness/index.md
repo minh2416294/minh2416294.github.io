@@ -1,5 +1,6 @@
 ---
 title: "Hardening the Harness"
+images: ["share.png"]
 date: 2026-07-14
 weight: 1
 draft: false
