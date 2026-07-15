@@ -10,7 +10,7 @@
 <div class="post-content md-content">{{ .Content }}</div>
 {{- end }}
 
-{{- $pages := .RegularPages.ByDate.Reverse }}
+{{- $pages := .RegularPages.ByWeight }}
 {{- if $pages }}
 {{- range $pages }}
 <article class="post-entry">
