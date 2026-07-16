@@ -1,5 +1,5 @@
 ---
-title: "Validation corpus: the failure mode no free model would produce"
+title: "Day 3: Validation corpus: the failure mode no free model would produce"
 date: 2026-07-14
 draft: false
 weight: 3

@@ -1,5 +1,5 @@
 ---
-title: "Zero dependencies: what it cost to keep the tree empty"
+title: "Day 5: Zero dependencies: what it cost to keep the tree empty"
 date: 2026-07-15
 draft: false
 weight: 5
