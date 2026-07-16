@@ -1,5 +1,5 @@
 ---
-title: "Diff-quality scoring: the metric I killed before shipping"
+title: "Day 1: Diff-quality scoring: the metric I killed before shipping"
 date: 2026-07-15
 draft: false
 weight: 1

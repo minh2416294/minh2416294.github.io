@@ -1,5 +1,5 @@
 ---
-title: "Adversarial re-checks: the blind spot they inherit"
+title: "Day 4: Adversarial re-checks: the blind spot they inherit"
 date: 2026-07-15
 draft: false
 weight: 4

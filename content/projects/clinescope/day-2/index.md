@@ -1,5 +1,5 @@
 ---
-title: "LLM-as-judge validation: the number I let get worse"
+title: "Day 2: LLM-as-judge validation: the number I let get worse"
 date: 2026-07-14
 draft: false
 weight: 2
