@@ -3,6 +3,14 @@ title: "Open-source contributions"
 description: "My contributions to Agentic AI Coding Repositories"
 contributions:
   - repo: "cline/cline"
+    summary: "restored native tool calls for Bedrock custom-ARN models, which were failing Converse API validation, by inheriting the configured base model's capabilities when the raw ARN misses the catalog"
+    url: "https://github.com/cline/cline/pull/12357"
+    date: 2026-07-17
+  - repo: "cline/cline"
+    summary: "let screen-reader users tell which of Plan/Act mode is active (so they don't edit in Act while believing they're in Plan), by applying the WAI-ARIA radiogroup pattern to the toggle"
+    url: "https://github.com/cline/cline/pull/12221"
+    date: 2026-07-10
+  - repo: "cline/cline"
     summary: "stopped Cline's CLI from spamming a duplicate-key React warning while browsing `/skills`, by giving each repeatable `read_files` row an index-namespaced key, covered by a regression test"
     url: "https://github.com/cline/cline/pull/12144"
     date: 2026-07-08
