@@ -3,6 +3,14 @@ title: "Open-source contributions"
 description: "My merged contributions to Agentic AI Coding Repositories"
 contributions:
   - repo: "cline/cline"
+    summary: "stopped \"Generate Git Commit Message\" from failing with `No changes in workspace` when the only changes are brand-new untracked files, by diffing each untracked file against an empty one when nothing is staged"
+    url: "https://github.com/cline/cline/pull/12069"
+    date: 2026-08-02
+  - repo: "cline/cline"
+    summary: "made multi-file edit review trustworthy in the VSCode extension, so each \"wants to edit this file\" row shows only that file's changes instead of repeating the whole multi-file patch, by splitting an `apply_patch` call into one message per file"
+    url: "https://github.com/cline/cline/pull/12086"
+    date: 2026-07-30
+  - repo: "cline/cline"
     summary: "stopped Cline's CLI from spamming a duplicate-key React warning while browsing `/skills`, by giving each repeatable `read_files` row an index-namespaced key, covered by a regression test"
     url: "https://github.com/cline/cline/pull/12144"
     date: 2026-07-26
